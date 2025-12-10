@@ -1,0 +1,50 @@
+/* 変数定義 */
+:root {
+    --accent-color: #333; /* アクセントカラー */
+    --accent-hover: #555;
+}
+
+/* --- 共通コンポーネント --- */
+
+/* ページのメインタイトル */
+.page-title {
+    color: var(--accent-color);
+    text-align: center;
+    margin-bottom: 1.5rem; /* mb-4 相当 */
+    font-weight: bold;
+}
+
+/* コンテンツを囲むカード */
+.content-card {
+    margin-top: 3rem; /* mt-5 相当 */
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* 影をつけて浮き上がらせる */
+}
+
+/* アクセントカラーのテキスト */
+.text-accent {
+    color: var(--accent-color);
+}
+
+/* --- ボタン --- */
+.btn-accent {
+    background-color: var(--accent-color);
+    color: white;
+    border: 1px solid black;
+    transition: all 0.3s;
+}
+
+.btn-accent:hover {
+    background-color: var(--accent-hover);
+    color: white;
+}
+
+/* --- リンク --- */
+.auth-link {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.auth-link:hover {
+    text-decoration: underline;
+}
