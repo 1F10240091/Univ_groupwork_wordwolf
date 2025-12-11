@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label='wordwolf' %}">Wordwolf</a>
+&rsaquo; <a href="{% url 'admin:wordwolf_wordset_changelist' %}">Word sets</a>
+&rsaquo; JSONインポート
+</div>
+{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+        <p>JSONファイルを選択してアップロードしてください。</p>
+        <p>形式: <code>[{"main_word": "...", "wolf_word": "...", "category": "..."}, ...]</code></p>
+        {{ form.as_p }}
+    </div>
+    <div class="submit-row">
+        <input type="submit" value="インポート" class="default">
+    </div>
+</form>
+{% endblock %}

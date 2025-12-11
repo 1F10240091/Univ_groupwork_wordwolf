@@ -1,5 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.urls import path
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django import forms
+import json
 from .models import User, WordSet, Question, Room, Member, RoomQuestion
 
 # カスタムユーザーモデルの設定
@@ -18,11 +23,60 @@ admin.site.register(User, CustomUserAdmin)
 
 # その他のモデルを登録（一覧で見やすいようにlist_displayなどを設定）
 
+class JsonImportForm(forms.Form):
+    json_file = forms.FileField(label='JSONファイル')
+
 @admin.register(WordSet)
 class WordSetAdmin(admin.ModelAdmin):
     list_display = ('main_word', 'wolf_word', 'category')
     list_filter = ('category',)
     search_fields = ('main_word', 'wolf_word')
+    change_list_template = "admin/wordwolf/wordset/change_list.html"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('import-json/', self.admin_site.admin_view(self.import_json), name='wordwolf_wordset_import_json'),
+        ]
+        return my_urls + urls
+
+    def import_json(self, request):
+        if request.method == "POST":
+            form = JsonImportForm(request.POST, request.FILES)
+            if form.is_valid():
+                json_file = request.FILES["json_file"]
+                try:
+                    # JSONファイルを読み込む
+                    data = json.load(json_file)
+                    
+                    # リスト形式であることを確認
+                    if not isinstance(data, list):
+                        raise ValueError("JSONデータはリスト形式である必要があります。")
+
+                    count = 0
+                    for item in data:
+                        # 必要なキーが存在するか確認
+                        if 'main_word' in item and 'wolf_word' in item:
+                            WordSet.objects.create(
+                                main_word=item.get('main_word'),
+                                wolf_word=item.get('wolf_word'),
+                                category=item.get('category', '')
+                            )
+                            count += 1
+                    
+                    self.message_user(request, f"{count} 件のデータをインポートしました。")
+                    return redirect("..")
+                except Exception as e:
+                    self.message_user(request, f"エラーが発生しました: {e}", level=messages.ERROR)
+        else:
+            form = JsonImportForm()
+        
+        context = dict(
+            self.admin_site.each_context(request),
+            form=form,
+            title="JSONインポート"
+        )
+        return render(request, "admin/wordwolf/wordset/import_json.html", context)
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
