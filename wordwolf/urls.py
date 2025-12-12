@@ -5,4 +5,5 @@ app_name = 'wordwolf'
 urlpatterns = [
     path('', views.home, name='home'),
     path('signup/', views.SignUpView.as_view(), name='signup'),
+    path('game/', views.game, name='game'),
 ]
