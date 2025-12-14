@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
+from django.db.models import Q
 from .forms import SignUpForm
+from .models import Room
 
 class SignUpView(generic.CreateView):
     form_class = SignUpForm
@@ -10,3 +12,15 @@ class SignUpView(generic.CreateView):
 
 def home(request):
     return render(request, 'wordwolf/home.html', {})
+
+def lobby(request):
+    query = request.GET.get('q')
+    rooms = Room.objects.filter(status=Room.Status.WAITING).order_by('-created_at')
+    
+    if query:
+        rooms = rooms.filter(room_name__icontains=query)
+    
+    return render(request, 'wordwolf/lobby.html', {
+        'rooms': rooms,
+        'query': query,
+    })
