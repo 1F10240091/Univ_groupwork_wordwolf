@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 from django.db.models import Q
@@ -11,6 +11,8 @@ class SignUpView(generic.CreateView):
     template_name = 'registration/signup.html'
 
 def home(request):
+    if request.user.is_authenticated:
+        return redirect('wordwolf:lobby')
     return render(request, 'wordwolf/home.html', {})
 
 def lobby(request):

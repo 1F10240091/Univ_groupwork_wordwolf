@@ -12,6 +12,10 @@
                 {% if user.is_authenticated %}
                     <p class="lead mb-4">Hi, <strong>{{ user.username }}</strong>!</p>
                     
+                    <div class="d-grid mb-3">
+                        <a href="{% url 'wordwolf:lobby' %}" class="btn btn-accent">ロビーに進む</a>
+                    </div>
+
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <div class="d-grid">
