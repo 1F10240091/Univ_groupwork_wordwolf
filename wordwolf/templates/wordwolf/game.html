@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'game_base.html' %}
 {% load static %}
 
 {% block title %}Game - WordWolf{% endblock %}
@@ -7,55 +7,23 @@
 <div class="container-fluid h-100 p-0">
     <div class="row h-100 g-0">
         <!-- サイドバー -->
-        <div class="col-md-3 bg-light border-end d-flex flex-column">
-            <aside class="player-sidebar p-3 flex-grow-1">
-                <h4 class="mb-3">プレイヤー一覧</h4>
-                <ul id="player-list" class="list-unstyled">
-                    <li>hoge</li>
-                    <li>hogehoge</li>
-                    <li>piyo</li>
-                    <li>piyoko</li>
-                </ul>
-            </aside>
+        <div class="col-3 bg-light border-end d-flex flex-column h-100">
+            {% include 'wordwolf/includes/_game_sidebar.html' %}
         </div>
         <!-- メイン画面 -->
         <div class="col-md-9 d-flex flex-column">
             <!-- ヘッダー -->
-            <header class="game-header p-3 border-bottom flex-shrink-0">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div id="current-topic">
-                        <h3>💡 現在の議題: <span id="topic-text">議論開始</span></h3>
-                    </div>
-                    <div id="my-word" class="mx-4">
-                        自分のお題: 
-                        <span id="word-display" class="fw-bold me-2">りんご</span>
-                    </div>
-                    <div id="time-limit">
-                        <h4 class="text-danger">残り時間: <span id="time-display">00:00</span></h4>
-                    </div>
-                </div>
-            </header>
+            {% include 'wordwolf/includes/_game_header.html' %}
             <!-- メイン -->
             <main id="chat-window" class="chat-area p-3 overflow-auto flex-grow-1">
                 <p>りんご</p>
             </main>
             <!-- フッター -->
-            <div class="game-controls p-3 border-top flex-shrink-0">
-                <div class="input-group mb-3">
-                    <input type="text" id="chat-input" class="form-control" placeholder="発言を入力...">
-                    <button id="send-chat-btn" class="btn btn-primary" type="button">発言</button>
-                </div>
-                
-                <div class="d-flex justify-content-end">
-                    <button class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#settingsModal">設定</button>
-                    <button class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#rulesModal">ルール確認</button>
-                    <button class="btn btn-danger" id="exit-room-btn">退出</button>
-                </div>
-            </div>
+            {% include 'wordwolf/includes/_game_controls.html' %}
         </div>
     </div>
 </div>
 
+{% endblock %} {% block extra_js %}
 <script type="module" src="{% static 'js/main.js' %}"></script>
-
 {% endblock %}
