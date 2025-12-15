@@ -5,7 +5,9 @@
 }
 
 /* --- 共通コンポーネント --- */
-
+html, body {
+    height: 100%;
+}
 /* ページのメインタイトル */
 .page-title {
     color: var(--accent-color);

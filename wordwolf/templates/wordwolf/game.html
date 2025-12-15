@@ -1,0 +1,29 @@
+{% extends 'game_base.html' %}
+{% load static %}
+
+{% block title %}Game - WordWolf{% endblock %}
+
+{% block content %}
+<div class="container-fluid h-100 p-0">
+    <div class="row h-100 g-0">
+        <!-- サイドバー -->
+        <div class="col-3 bg-light border-end d-flex flex-column h-100">
+            {% include 'wordwolf/includes/_game_sidebar.html' %}
+        </div>
+        <!-- メイン画面 -->
+        <div class="col-md-9 d-flex flex-column">
+            <!-- ヘッダー -->
+            {% include 'wordwolf/includes/_game_header.html' %}
+            <!-- メイン -->
+            <main id="chat-window" class="chat-area p-3 overflow-auto flex-grow-1">
+                <p>りんご</p>
+            </main>
+            <!-- フッター -->
+            {% include 'wordwolf/includes/_game_controls.html' %}
+        </div>
+    </div>
+</div>
+
+{% endblock %} {% block extra_js %}
+<script type="module" src="{% static 'js/main.js' %}"></script>
+{% endblock %}

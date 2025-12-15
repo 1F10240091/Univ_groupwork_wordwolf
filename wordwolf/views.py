@@ -26,3 +26,6 @@ def lobby(request):
         'rooms': rooms,
         'query': query,
     })
+
+def game(request):
+    return render(request, 'wordwolf/game.html', {})
