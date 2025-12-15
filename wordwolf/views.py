@@ -10,3 +10,6 @@ class SignUpView(generic.CreateView):
 
 def home(request):
     return render(request, 'wordwolf/home.html', {})
+
+def game(request):
+    return render(request, 'wordwolf/game.html', {})
