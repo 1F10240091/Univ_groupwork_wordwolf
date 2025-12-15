@@ -23,9 +23,6 @@ admin.site.register(User, CustomUserAdmin)
 
 # その他のモデルを登録（一覧で見やすいようにlist_displayなどを設定）
 
-class JsonImportForm(forms.Form):
-    json_file = forms.FileField(label='JSONファイル')
-
 @admin.register(WordSet)
 class WordSetAdmin(admin.ModelAdmin):
     list_display = ('main_word', 'wolf_word', 'category')
@@ -41,42 +38,49 @@ class WordSetAdmin(admin.ModelAdmin):
         return my_urls + urls
 
     def import_json(self, request):
-        if request.method == "POST":
-            form = JsonImportForm(request.POST, request.FILES)
-            if form.is_valid():
-                json_file = request.FILES["json_file"]
-                try:
-                    # JSONファイルを読み込む
-                    data = json.load(json_file)
-                    
-                    # リスト形式であることを確認
-                    if not isinstance(data, list):
-                        raise ValueError("JSONデータはリスト形式である必要があります。")
-
-                    count = 0
-                    for item in data:
-                        # 必要なキーが存在するか確認
-                        if 'main_word' in item and 'wolf_word' in item:
-                            WordSet.objects.create(
-                                main_word=item.get('main_word'),
-                                wolf_word=item.get('wolf_word'),
-                                category=item.get('category', '')
-                            )
-                            count += 1
-                    
-                    self.message_user(request, f"{count} 件のデータをインポートしました。")
-                    return redirect("..")
-                except Exception as e:
-                    self.message_user(request, f"エラーが発生しました: {e}", level=messages.ERROR)
-        else:
-            form = JsonImportForm()
+        # デフォルトファイルを読み込む
+        import os
+        from django.conf import settings
+        file_path = os.path.join(settings.BASE_DIR, 'wordwolf', 'fixtures', 'words,json')
         
-        context = dict(
-            self.admin_site.each_context(request),
-            form=form,
-            title="JSONインポート"
-        )
-        return render(request, "admin/wordwolf/wordset/import_json.html", context)
+        try:
+            with open(file_path, 'rb') as f:
+                content = f.read()
+
+            if isinstance(content, bytes):
+                try:
+                    text = content.decode('utf-8')
+                except UnicodeDecodeError:
+                    try:
+                        text = content.decode('cp932')
+                    except UnicodeDecodeError:
+                        raise ValueError("対応していないエンコーディングです。UTF-8またはShift-JISで保存してください。")
+            else:
+                text = content
+
+            data = json.loads(text)
+            
+            # リスト形式であることを確認
+            if not isinstance(data, list):
+                raise ValueError("JSONデータはリスト形式である必要があります。")
+
+            count = 0
+            for item in data:
+                # 必要なキーが存在するか確認
+                if 'main_word' in item and 'wolf_word' in item:
+                    obj, created = WordSet.objects.get_or_create(
+                        main_word=item.get('main_word'),
+                        wolf_word=item.get('wolf_word'),
+                        defaults={'category': item.get('category', '')}
+                    )
+                    if created:
+                        count += 1
+            
+            self.message_user(request, f"{count} 件のデータをインポートしました。")
+        except Exception as e:
+            self.message_user(request, f"エラーが発生しました: {e}", level=messages.ERROR)
+        
+        return redirect("..")
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
