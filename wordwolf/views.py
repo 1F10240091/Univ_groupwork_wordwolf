@@ -2,13 +2,40 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 from django.db.models import Q
-from .forms import SignUpForm
+from django.contrib.auth.decorators import login_required
+from .forms import SignUpForm, UserUpdateForm
 from .models import Room
 
 class SignUpView(generic.CreateView):
     form_class = SignUpForm
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
+
+@login_required
+def profile(request):
+    user = request.user
+    total_games = user.win_num + user.lose_num
+    win_rate = 0
+    if total_games > 0:
+        win_rate = (user.win_num / total_games) * 100
+    
+    context = {
+        'user': user,
+        'total_games': total_games,
+        'win_rate': win_rate,
+    }
+    return render(request, 'wordwolf/profile.html', context)
+
+@login_required
+def profile_edit(request):
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('wordwolf:profile')
+    else:
+        form = UserUpdateForm(instance=request.user)
+    return render(request, 'wordwolf/profile_edit.html', {'form': form})
 
 def home(request):
     if request.user.is_authenticated:
