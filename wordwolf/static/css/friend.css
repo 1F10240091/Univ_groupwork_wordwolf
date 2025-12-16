@@ -1,0 +1,99 @@
+/*全体のコンテナカード型にする*/
+.friend-container {
+  max-width: 600px;       
+  margin: 30px auto;      
+  padding: 25px;          
+  background-color: #fff; 
+  border-radius: 8px;      
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+}
+
+.friend-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.section h3 {
+  font-size: 1.1em;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 25px 0;
+}
+
+.section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.request-item, .friend-item {
+  display: flex;          
+  justify-content: space-between;
+  align-items: center; 
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+}
+
+.btn-approve {
+  background-color: #28a745;
+  color: white;
+  margin-left: 10px; 
+}
+.btn-approve:hover { background-color: #218838; } 
+
+.btn-reject, .btn-delete {
+  background-color: #dc3545;
+  color: white;
+  margin-left: 10px;
+}
+.btn-reject:hover, .btn-delete:hover { background-color: #c82333; }
+
+/*検索フォーム*/
+.search-form {
+  display: flex; 
+  gap: 10px;
+}
+
+.search-form input {
+  flex-grow: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.search-form button {
+  background-color: #007bff;
+  color: white;
+}
+
+/*フレンドリスト*/
+.friend-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.friend-name {
+  font-weight: 500;
+}
