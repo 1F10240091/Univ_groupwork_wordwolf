@@ -1,17 +1,17 @@
-{% extends 'wordwolf/base.html' %} 
+{% extends 'base.html' %} 
 {% load static %}
 
 {% block title %}ワードウルフ ランキング{% endblock %}
 
 {% block content %}
     <div class="container ranking-page">
-        <h2>🏆 ワードウルフ プレイヤーランキング 🏆</h2>
+        <h2>ワードウルフ プレイヤーランキング</h2>
         
         <p class="description">最新の勝利数に基づいた上位プレイヤーのリストです。</p>
 
         {% if ranking_list %}
         
-        <table class="ranking-table">
+        <table class="table table-striped ranking-table">
             <thead>
                 <tr>
                     <th class="rank-col">順位</th>
@@ -25,11 +25,8 @@
                 <tr class="{% if forloop.counter <= 3 %}top-rank{% endif %}">
                     <td>
                         {{ forloop.counter }}
-                        {% if forloop.counter == 1 %}🥇{% endif %}
-                        {% if forloop.counter == 2 %}🥈{% endif %}
-                        {% if forloop.counter == 3 %}🥉{% endif %}
                     </td>
-                    <td><a href="#">{{ player.user.username }}</a></td> 
+                    <td>{{ player.user.username }}</td> 
                     <td class="score-data">{{ player.score }}</td>
                     <td>{{ player.games_played }}</td>
                 </tr>
@@ -46,9 +43,8 @@
         </p>
         {% endif %}
 
-        <div class="footer-links">
-            <a href="{% url 'game_home' %}">🎮 ゲームトップに戻る</a> | 
-            <a href="{% url 'settings' %}">⚙️ 設定</a>
+        <div class="footer-links mt-4">
+            <a href="{% url 'wordwolf:home' %}" class="btn btn-outline-secondary">🎮 ロビーに戻る</a> 
         </div>
     </div>
 {% endblock %}
