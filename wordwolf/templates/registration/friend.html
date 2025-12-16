@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Friend{% endblock %}
+
+{% block content %}
+<div class="friend-container">
+    <h2>フレンド管理</h2>
+
+    <div class="section requests">
+        <h3>届いている申請</h3>
+        {% if friend_requests %}
+            <ul>
+                {% for request in friend_requests %}
+                <li class="request-item">
+                    <span>{{ request.from_user.username }} さんからの申請</span>
+                    <form action="{% url 'approve_request' request.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-approve">承認</button>
+                    </form>
+                    <form action="{% url 'reject_request' request.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-reject">拒否</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>現在、フレンド申請はありません。</p>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <div class="section search">
+        <h3>フレンドを探す</h3>
+        <form action="{% url 'search_user' %}" method="GET" class="search-form">
+            <input type="text" name="query" placeholder="ユーザー名で検索...">
+            <button type="submit">検索</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <div class="section list">
+        <h3>あなたのフレンド</h3>
+        {% if friends %}
+            <ul class="friend-list">
+                {% for friend in friends %}
+                <li class="friend-item">
+                    <div class="friend-info">
+                        {% if friend.icon %}
+                            <img src="{{ friend.icon.url }}" alt="icon" class="user-icon">
+                        {% endif %}
+                        <span class="friend-name">{{ friend.username }}</span>
+                    </div>
+                    
+                    <form action="{% url 'remove_friend' friend.id %}" method="POST" onsubmit="return confirm('本当に削除しますか？');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete">削除</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>まだフレンドがいません。</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
