@@ -56,3 +56,28 @@ def lobby(request):
 
 def game(request):
     return render(request, 'wordwolf/game.html', {})
+
+@login_required
+def friend_list(request):
+    context = {
+        'friend_requests': [],
+        'friends': [],
+    }
+    return render(request, 'wordwolf/friend.html', context)
+
+@login_required
+def search_user(request):
+    return redirect('wordwolf:friend_list')
+
+@login_required
+def approve_request(request, request_id):
+    return redirect('wordwolf:friend_list')
+
+@login_required
+def reject_request(request, request_id):
+    return redirect('wordwolf:friend_list')
+
+@login_required
+def remove_friend(request, user_id):
+    return redirect('wordwolf:friend_list')
+
