@@ -4,7 +4,7 @@ from django.views import generic
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, UserUpdateForm
-from .models import Room
+from .models import Room, User
 
 class SignUpView(generic.CreateView):
     form_class = SignUpForm
@@ -80,4 +80,14 @@ def reject_request(request, request_id):
 @login_required
 def remove_friend(request, user_id):
     return redirect('wordwolf:friend_list')
-
+  
+def ranking(request):
+    top_users = User.objects.order_by('-win_num')[:10]
+    ranking_list = []
+    for user in top_users:
+        ranking_list.append({
+            'user': user,
+            'score': user.win_num,
+            'games_played': user.win_num + user.lose_num
+        })
+    return render(request, 'wordwolf/ranking.html', {'ranking_list': ranking_list})
