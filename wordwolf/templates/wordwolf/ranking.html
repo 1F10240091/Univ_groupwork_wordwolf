@@ -1,0 +1,54 @@
+{% extends 'wordwolf/base.html' %} 
+{% load static %}
+
+{% block title %}ワードウルフ ランキング{% endblock %}
+
+{% block content %}
+    <div class="container ranking-page">
+        <h2>🏆 ワードウルフ プレイヤーランキング 🏆</h2>
+        
+        <p class="description">最新の勝利数に基づいた上位プレイヤーのリストです。</p>
+
+        {% if ranking_list %}
+        
+        <table class="ranking-table">
+            <thead>
+                <tr>
+                    <th class="rank-col">順位</th>
+                    <th class="name-col">プレイヤー名</th>
+                    <th class="score-col">勝利数</th>
+                    <th class="games-col">プレイ回数</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in ranking_list %}
+                <tr class="{% if forloop.counter <= 3 %}top-rank{% endif %}">
+                    <td>
+                        {{ forloop.counter }}
+                        {% if forloop.counter == 1 %}🥇{% endif %}
+                        {% if forloop.counter == 2 %}🥈{% endif %}
+                        {% if forloop.counter == 3 %}🥉{% endif %}
+                    </td>
+                    <td><a href="#">{{ player.user.username }}</a></td> 
+                    <td class="score-data">{{ player.score }}</td>
+                    <td>{{ player.games_played }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">まだランキングデータがありません。</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-data-message">
+            ランキングデータをロードできませんでした。
+        </p>
+        {% endif %}
+
+        <div class="footer-links">
+            <a href="{% url 'game_home' %}">🎮 ゲームトップに戻る</a> | 
+            <a href="{% url 'settings' %}">⚙️ 設定</a>
+        </div>
+    </div>
+{% endblock %}
