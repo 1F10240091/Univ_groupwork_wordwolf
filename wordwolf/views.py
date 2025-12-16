@@ -80,7 +80,7 @@ def reject_request(request, request_id):
 @login_required
 def remove_friend(request, user_id):
     return redirect('wordwolf:friend_list')
-
+  
 def ranking(request):
     top_users = User.objects.order_by('-win_num')[:10]
     ranking_list = []

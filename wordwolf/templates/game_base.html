@@ -4,18 +4,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}WordWolf{% endblock %}</title>
-    <!-- Bootstrap 5.3.0 CDN -->
+    <title>{% block title %}WordWolf Game{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- カスタムCSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
     {% block extra_css %}{% endblock %}
-</head>
-<body>
-    <div class="{% block container_class %}container{% endblock %} h-100">
-        {% block content %}{% endblock %}
+    
+    </head>
+<body class="d-flex flex-column h-100"> 
+    
+    <div id="game-wrapper" class="flex-grow-1 p-0">
+        {% block content %}
+        {% endblock %}
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}
 </body>

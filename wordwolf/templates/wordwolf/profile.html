@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - WordWolf{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="content-card card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="page-title mb-0">プロフィール</h1>
+                    <a href="{% url 'wordwolf:lobby' %}" class="btn btn-outline-secondary">ロビーに戻る</a>
+                </div>
+
+                <div class="text-center mb-5">
+                    <div class="avatar-placeholder mb-3 mx-auto" style="width: 100px; height: 100px; background-color: #e9ecef; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #6c757d;">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <h2 class="h3">{{ user.username }}</h2>
+                    <p class="text-muted">登録日: {{ user.date_joined|date:"Y/m/d" }}</p>
+                </div>
+
+                <div class="row text-center mb-4">
+                    <div class="col-4">
+                        <div class="p-3 border rounded bg-light">
+                            <div class="h4 mb-1">{{ total_games }}</div>
+                            <div class="small text-muted">対戦数</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3 border rounded bg-light">
+                            <div class="h4 mb-1">{{ user.win_num }}</div>
+                            <div class="small text-muted">勝利</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3 border rounded bg-light">
+                            <div class="h4 mb-1">{{ win_rate|floatformat:1 }}%</div>
+                            <div class="small text-muted">勝率</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'wordwolf:profile_edit' %}" class="btn btn-outline-primary">プロフィール編集</a>
+                    <a href="{% url 'wordwolf:friend_list' %}" class="btn btn-outline-info">フレンド管理</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
