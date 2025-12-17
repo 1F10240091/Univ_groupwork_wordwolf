@@ -73,5 +73,40 @@
         "main_word": "青",
         "wolf_word": "緑",
         "category": "色"
+    },
+    {
+       "main_word":"ディズニー",
+       "wolf_word":"ユニバーサルスタジオ",
+       "category":"テーマパーク"
+    },
+    {
+        "main_word": "Instagram",
+        "wolf_word": "Twitter",
+        "category": "SNS"
+    },
+    {
+        "main_word": "映画館",
+        "wolf_word": "水族館",
+        "category": "デートスポット"
+    },
+    {
+        "main_word": "既読スルー",
+        "wolf_word": "未読スルー",
+        "category": "line"
+    },
+    {
+        "main_word": "鬼ごっこ",
+        "wolf_word": "かくれんぼ",
+        "category": "遊び"
+    },
+    {
+        "main_word": "富士山",
+        "wolf_word": "エベレスト",
+        "category": "山"
+    },
+    {
+        "main_word": "ビーチ",
+        "wolf_word": "山岳",
+        "category": "旅行先"
     }
 ]
