@@ -82,7 +82,16 @@ def remove_friend(request, user_id):
     return redirect('wordwolf:friend_list')
   
 def ranking(request):
-    top_users = User.objects.order_by('-win_num')[:10]
+    # 追加：クエリパラメータで切り替え
+    order_by = request.GET.get('order_by', 'win')
+
+    if order_by == 'play':
+        users = list(User.objects.all())
+        users.sort(key=lambda u: (u.win_num + u.lose_num), reverse=True)
+        top_users = users[:10]
+    else:
+        top_users = User.objects.order_by('-win_num')[:10]
+
     ranking_list = []
     for user in top_users:
         ranking_list.append({
@@ -90,4 +99,5 @@ def ranking(request):
             'score': user.win_num,
             'games_played': user.win_num + user.lose_num
         })
-    return render(request, 'wordwolf/ranking.html', {'ranking_list': ranking_list})
+    # 追加：order_byを渡す
+    return render(request, 'wordwolf/ranking.html', {'ranking_list': ranking_list, 'order_by': order_by})
