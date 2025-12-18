@@ -44,6 +44,10 @@
                 <div class="d-grid gap-2">
                     <a href="{% url 'wordwolf:profile_edit' %}" class="btn btn-outline-primary">プロフィール編集</a>
                     <a href="{% url 'wordwolf:friend_list' %}" class="btn btn-outline-info">フレンド管理</a>
+                    <form method="post" action="{% url 'logout' %}" class="d-grid">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger">ログアウト</button>
+                    </form>
                 </div>
             </div>
         </div>
