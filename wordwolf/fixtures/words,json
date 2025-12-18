@@ -1,0 +1,112 @@
+[
+    {
+        "main_word": "リンゴ",
+        "wolf_word": "ナシ",
+        "category": "食べ物"
+    },
+    {
+        "main_word": "コーヒー",
+        "wolf_word": "紅茶",
+        "category": "飲み物"
+    },
+    {
+        "main_word": "犬",
+        "wolf_word": "猫",
+        "category": "動物"
+    },
+    {
+        "main_word": "サッカー",
+        "wolf_word": "野球",
+        "category": "スポーツ"
+    },
+    {
+        "main_word": "先生",
+        "wolf_word": "医者",
+        "category": "職業"
+    },
+    {
+        "main_word": "夏",
+        "wolf_word": "冬",
+        "category": "季節"
+    },
+    {
+        "main_word": "ピザ",
+        "wolf_word": "ハンバーガー",
+        "category": "食べ物"
+    },
+    {
+        "main_word": "バラ",
+        "wolf_word": "チューリップ",
+        "category": "植物"
+    },
+    {
+        "main_word": "ギター",
+        "wolf_word": "ピアノ",
+        "category": "楽器"
+    },
+    {
+        "main_word": "車",
+        "wolf_word": "バイク",
+        "category": "乗り物"
+    },
+    {
+        "main_word": "映画",
+        "wolf_word": "ドラマ",
+        "category": "エンタメ"
+    },
+    {
+        "main_word": "寿司",
+        "wolf_word": "そば",
+        "category": "食べ物"
+    },
+    {
+        "main_word": "東京タワー",
+        "wolf_word": "スカイツリー",
+        "category": "建築"
+    },
+    {
+        "main_word": "パン",
+        "wolf_word": "ご飯",
+        "category": "食べ物"
+    },
+    {
+        "main_word": "青",
+        "wolf_word": "緑",
+        "category": "色"
+    },
+    {
+       "main_word":"ディズニー",
+       "wolf_word":"ユニバーサルスタジオ",
+       "category":"テーマパーク"
+    },
+    {
+        "main_word": "Instagram",
+        "wolf_word": "Twitter",
+        "category": "SNS"
+    },
+    {
+        "main_word": "映画館",
+        "wolf_word": "水族館",
+        "category": "デートスポット"
+    },
+    {
+        "main_word": "既読スルー",
+        "wolf_word": "未読スルー",
+        "category": "line"
+    },
+    {
+        "main_word": "鬼ごっこ",
+        "wolf_word": "かくれんぼ",
+        "category": "遊び"
+    },
+    {
+        "main_word": "富士山",
+        "wolf_word": "エベレスト",
+        "category": "山"
+    },
+    {
+        "main_word": "ビーチ",
+        "wolf_word": "山岳",
+        "category": "旅行先"
+    }
+]
