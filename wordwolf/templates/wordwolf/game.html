@@ -23,7 +23,14 @@
         </div>
     </div>
 </div>
-
 {% endblock %} {% block extra_js %}
 <script type="module" src="{% static 'js/main.js' %}"></script>
+{{ room.id|json_script:"room-id" }}
+{{ request.user.username|json_script:"user-name" }}
+<script id="game-data" type="application/json">
+    {
+        "roomId": "{{ room_id }}",
+        "userName": "{{ request.user.username }}"
+    }
+</script>
 {% endblock %}

@@ -29,6 +29,7 @@
                 </form>
 
                 <div class="list-group">
+                    <a href="{% url 'wordwolf:game_room' room_id='1111' %}">test用ゲームルーム</a>
                     {% for room in rooms %}
                         <a href="{% url 'wordwolf:game' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if room.is_full %}disabled{% endif %}">
                             <div>

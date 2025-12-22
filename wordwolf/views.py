@@ -54,9 +54,8 @@ def lobby(request):
         'query': query,
     })
 
-def game(request):
-    return render(request, 'wordwolf/game.html', {})
-
+def game(request, room_id):
+    return render(request, 'wordwolf/game.html', {'room_id': room_id})
 @login_required
 def friend_list(request):
     context = {

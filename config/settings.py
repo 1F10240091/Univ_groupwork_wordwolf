@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'wordwolf',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -122,3 +124,12 @@ AUTH_USER_MODEL = 'wordwolf.User'
 LOGIN_REDIRECT_URL = 'wordwolf:home'
 
 LOGOUT_REDIRECT_URL = 'login'
+
+#後でredisに変える
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
+
+ASGI_APPLICATION = 'config.asgi.application'
