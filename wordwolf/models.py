@@ -26,6 +26,8 @@ class Question(models.Model):
 class Room(models.Model):
     room_name = models.CharField(max_length=50)
     max_user_num = models.IntegerField(default=6)
+    discussion_time = models.IntegerField(default=3, help_text="討論時間（分）")
+    category = models.CharField(max_length=50, default='all', help_text="お題のカテゴリ")
     
     @property
     def is_full(self):

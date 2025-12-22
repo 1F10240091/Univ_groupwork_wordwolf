@@ -14,7 +14,7 @@
                     <div>
                         <a href="{% url 'wordwolf:profile' %}" class="btn btn-outline-secondary me-2">プロフィール</a>
                         <a href="{% url 'wordwolf:ranking' %}" class="btn btn-outline-secondary me-2">ランキング</a>
-                        <a href="#" class="btn btn-accent">ルーム作成</a>
+                        <a href="{% url 'wordwolf:create_game' %}" class="btn btn-accent">ルーム作成</a>
                     </div>
                 </div>
 
@@ -28,23 +28,23 @@
                     </div>
                 </form>
 
-                <div class="list-group">
+                <div class="list-group" id="room-list">
                     {% for room in rooms %}
-                        <a href="{% url 'wordwolf:game' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if room.is_full %}disabled{% endif %}">
+                        <a id="room-{{ room.id }}" href="{% url 'wordwolf:room_detail' room.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if room.is_full %}disabled{% endif %}">
                             <div>
-                                <h5 class="mb-1">{{ room.room_name }}</h5>
-                                <small class="text-muted">作成日: {{ room.created_at|date:"Y/m/d H:i" }}</small>
+                                <h5 class="mb-1 room-name">{{ room.room_name }}</h5>
+                                <small class="text-muted room-date">作成日: {{ room.created_at|date:"Y/m/d H:i" }}</small>
                             </div>
                             <div class="text-end">
-                                <span class="badge {% if room.is_full %}bg-danger{% else %}bg-primary{% endif %} rounded-pill mb-1">
+                                <span class="badge {% if room.is_full %}bg-danger{% else %}bg-primary{% endif %} rounded-pill mb-1 room-count">
                                     {{ room.members.count }} / {{ room.max_user_num }}
                                 </span>
                                 <br>
-                                <small class="text-muted">{{ room.get_status_display }}</small>
+                                <small class="text-muted room-status">{{ room.get_status_display }}</small>
                             </div>
                         </a>
                     {% empty %}
-                        <div class="list-group-item text-center text-muted py-4">
+                        <div id="no-rooms-message" class="list-group-item text-center text-muted py-4">
                             {% if query %}
                                 条件に一致するルームは見つかりませんでした。
                             {% else %}
@@ -57,4 +57,78 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const lobbySocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/lobby/'
+    );
+
+    lobbySocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const roomList = document.getElementById('room-list');
+        let noRoomsMsg = document.getElementById('no-rooms-message');
+
+        if (data.type === 'room_update') {
+            if (data.action === 'delete') {
+                const item = document.getElementById('room-' + data.room_id);
+                if (item) item.remove();
+                
+                // Check if list is empty (ignoring the message itself if it exists)
+                const items = roomList.querySelectorAll('a.list-group-item');
+                if (items.length === 0 && !noRoomsMsg) {
+                    const div = document.createElement('div');
+                    div.id = 'no-rooms-message';
+                    div.className = 'list-group-item text-center text-muted py-4';
+                    div.textContent = '現在待機中のルームはありません。';
+                    roomList.appendChild(div);
+                }
+            } else {
+                // update or create
+                if (noRoomsMsg) {
+                    noRoomsMsg.remove();
+                    noRoomsMsg = null;
+                }
+
+                let item = document.getElementById('room-' + data.room.id);
+                if (!item) {
+                    item = document.createElement('a');
+                    item.id = 'room-' + data.room.id;
+                    item.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center';
+                    item.href = '/wordwolf/room/' + data.room.id + '/';
+                    
+                    item.innerHTML = `
+                        <div>
+                            <h5 class="mb-1 room-name"></h5>
+                            <small class="text-muted room-date"></small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge rounded-pill mb-1 room-count"></span>
+                            <br>
+                            <small class="text-muted room-status"></small>
+                        </div>
+                    `;
+                    roomList.prepend(item);
+                }
+
+                // Update content
+                item.querySelector('.room-name').textContent = data.room.room_name;
+                item.querySelector('.room-date').textContent = '作成日: ' + data.room.created_at;
+                
+                const badge = item.querySelector('.room-count');
+                badge.textContent = data.room.member_count + ' / ' + data.room.max_user_num;
+                badge.className = 'badge rounded-pill mb-1 room-count ' + (data.room.is_full ? 'bg-danger' : 'bg-primary');
+                
+                item.querySelector('.room-status').textContent = data.room.status;
+                
+                if (data.room.is_full) {
+                    item.classList.add('disabled');
+                } else {
+                    item.classList.remove('disabled');
+                }
+            }
+        }
+    };
+</script>
 {% endblock %}
