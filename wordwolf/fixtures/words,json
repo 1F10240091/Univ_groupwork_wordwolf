@@ -27,7 +27,7 @@
     {
         "main_word": "夏",
         "wolf_word": "冬",
-        "category": "季節"
+        "category": "自然"
     },
     {
         "main_word": "ピザ",
@@ -37,7 +37,7 @@
     {
         "main_word": "バラ",
         "wolf_word": "チューリップ",
-        "category": "植物"
+        "category": "自然"
     },
     {
         "main_word": "ギター",
@@ -77,7 +77,7 @@
     {
        "main_word":"ディズニー",
        "wolf_word":"ユニバーサルスタジオ",
-       "category":"テーマパーク"
+       "category":"レジャー"
     },
     {
         "main_word": "Instagram",
@@ -87,12 +87,12 @@
     {
         "main_word": "映画館",
         "wolf_word": "水族館",
-        "category": "デートスポット"
+        "category": "レジャー"
     },
     {
         "main_word": "既読スルー",
         "wolf_word": "未読スルー",
-        "category": "line"
+        "category": "SNS"
     },
     {
         "main_word": "鬼ごっこ",
@@ -102,7 +102,7 @@
     {
         "main_word": "富士山",
         "wolf_word": "エベレスト",
-        "category": "山"
+        "category": "自然"
     },
     {
         "main_word": "ビーチ",
