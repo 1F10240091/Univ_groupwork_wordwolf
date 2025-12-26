@@ -50,7 +50,7 @@
                         </div>
                     </div>
                     
-                    <a href="{% url 'wordwolf:lobby' %}" class="btn btn-secondary">ロビーに戻る</a>
+                    <a href="{% url 'wordwolf:lobby' %}" class="btn btn-outline-secondary">ロビーに戻る</a>
                     
                     <form method="post" action="{% url 'logout' %}" class="d-grid">
                         {% csrf_token %}
