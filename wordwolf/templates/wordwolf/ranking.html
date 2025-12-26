@@ -4,47 +4,59 @@
 {% block title %}ワードウルフ ランキング{% endblock %}
 
 {% block content %}
-    <div class="container ranking-page">
-        <h2>ワードウルフ プレイヤーランキング</h2>
-        
-        <p class="description">最新の勝利数に基づいた上位プレイヤーのリストです。</p>
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="content-card card">
+            <div class="card-body">
+                <h1 class="page-title">ランキング</h1>
+                
+                <p class="text-center mb-4 text-muted">最新の勝利数に基づいた上位プレイヤーのリストです。</p>
 
-        {% if ranking_list %}
-        
-        <table class="table table-striped ranking-table">
-            <thead>
-                <tr>
-                    <th class="rank-col">順位</th>
-                    <th class="name-col">プレイヤー名</th>
-                    <th class="score-col">勝利数</th>
-                    <th class="games-col">プレイ回数</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for player in ranking_list %}
-                <tr class="{% if forloop.counter <= 3 %}top-rank{% endif %}">
-                    <td>
-                        {{ forloop.counter }}
-                    </td>
-                    <td>{{ player.user.username }}</td> 
-                    <td class="score-data">{{ player.score }}</td>
-                    <td>{{ player.games_played }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4">まだランキングデータがありません。</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <p class="no-data-message">
-            ランキングデータをロードできませんでした。
-        </p>
-        {% endif %}
+                {% if ranking_list %}
+                
+                <div class="table-responsive">
+                    <table class="table ranking-table">
+                        <thead>
+                            <tr>
+                                <th class="rank-col">順位</th>
+                                <th class="name-col">プレイヤー名</th>
+                                <th class="score-col">勝利数</th>
+                                <th class="games-col">プレイ回数</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for player in ranking_list %}
+                            <tr class="{% if forloop.counter <= 3 %}top-rank rank-{{ forloop.counter }}{% endif %}">
+                                <td class="rank-cell">
+                                    {% if forloop.counter == 1 %}
+                                        <div class="medal-icon medal-1" title="1st"></div>
+                                    {% elif forloop.counter == 2 %}
+                                        <div class="medal-icon medal-2" title="2nd"></div>
+                                    {% elif forloop.counter == 3 %}
+                                        <div class="medal-icon medal-3" title="3rd"></div>
+                                    {% else %}
+                                        {{ forloop.counter }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ player.user.username }}</td> 
+                                <td class="score-data text-accent">{{ player.score }}</td>
+                                <td>{{ player.games_played }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center py-5 text-muted">
+                    ランキングデータがまだありません。
+                </p>
+                {% endif %}
 
-        <div class="footer-links mt-4">
-            <a href="{% url 'wordwolf:home' %}" class="btn btn-outline-secondary">🎮 ロビーに戻る</a> 
+                <div class="d-grid gap-2 mt-4 col-md-6 mx-auto">
+                    <a href="{% url 'wordwolf:lobby' %}" class="btn btn-outline-secondary">ロビーに戻る</a> 
+                </div>
+            </div>
         </div>
     </div>
+</div>
 {% endblock %}
