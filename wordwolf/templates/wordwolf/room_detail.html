@@ -1,0 +1,120 @@
+{% extends 'card_layout.html' %}
+
+{% block title %}{{ room.room_name }} - WordWolf{% endblock %}
+
+{% block card_content %}
+<h1 class="mb-4 text-accent">{{ room.room_name }}</h1>
+
+<div class="mb-4 text-start">
+    <p><strong>ホスト:</strong> {{ room.host.username }}</p>
+    <p><strong>ステータス:</strong> {{ room.get_status_display }}</p>
+    <p><strong>カテゴリ:</strong> {{ room.get_category_display }}</p>
+    <p><strong>討論時間:</strong> {{ room.discussion_time }}分</p>
+    <p><strong>現在の参加人数:</strong> <span id="member-count">{{ members.count }}</span> 人</p>
+</div>
+
+<h2 class="h5 text-start text-accent">参加メンバー</h2>
+<ul id="member-list" class="list-group mb-4 text-start">
+    {% for member in members %}
+        <li class="list-group-item" id="member-{{ member.user.username }}">{{ member.user.username }}</li>
+    {% endfor %}
+</ul>
+
+<div class="d-grid gap-2">
+    {% if user == room.host and room.status == 'waiting' %}
+        <button id="start-game-btn" class="btn btn-accent" {% if members.count < 3 %}disabled{% endif %}>ゲーム開始</button>
+        <p id="start-game-warning" class="text-danger small mt-1" {% if members.count >= 3 %}style="display: none;"{% endif %}>※3人以上で開始できます</p>
+    {% elif room.status == 'waiting' %}
+        <button class="btn btn-secondary" disabled>ホストが開始するのを待っています...</button>
+    {% endif %}
+    
+    <button id="leave-btn" class="btn btn-outline-secondary">退出</button>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ room.id|json_script:"room-id" }}
+{{ user.username|json_script:"user-name" }}
+<script>
+    const roomId = JSON.parse(document.getElementById('room-id').textContent);
+    const userName = JSON.parse(document.getElementById('user-name').textContent);
+
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/room/'
+        + roomId
+        + '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        
+        if (data.type === 'user_join') {
+            const memberList = document.querySelector('#member-list');
+            if (!document.getElementById(`member-${data.username}`)) {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.id = `member-${data.username}`;
+                li.textContent = data.username;
+                memberList.appendChild(li);
+                updateMemberCount(1);
+            }
+        } else if (data.type === 'user_leave') {
+            const memberItem = document.getElementById(`member-${data.username}`);
+            if (memberItem) {
+                memberItem.remove();
+                updateMemberCount(-1);
+            }
+        } else if (data.type === 'game_start') {
+            window.location.href = "{% url 'wordwolf:game' %}";
+        } else if (data.type === 'room_dissolved') {
+            alert("ホストが退出したため、ルームが解散されました。");
+            window.location.href = "{% url 'wordwolf:lobby' %}";
+        } else if (data.type === 'leave_success') {
+            window.location.href = "{% url 'wordwolf:lobby' %}";
+        }
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    function updateMemberCount(change) {
+        const countSpan = document.getElementById('member-count');
+        let count = parseInt(countSpan.textContent);
+        count += change;
+        countSpan.textContent = count;
+
+        const startBtn = document.getElementById('start-game-btn');
+        const warningMsg = document.getElementById('start-game-warning');
+        if (startBtn) {
+            if (count >= 3) {
+                startBtn.disabled = false;
+                if (warningMsg) warningMsg.style.display = 'none';
+            } else {
+                startBtn.disabled = true;
+                if (warningMsg) warningMsg.style.display = 'block';
+            }
+        }
+    }
+
+    const startBtn = document.getElementById('start-game-btn');
+    if (startBtn) {
+        startBtn.onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'start_game'
+            }));
+        };
+    }
+
+    const leaveBtn = document.getElementById('leave-btn');
+    if (leaveBtn) {
+        leaveBtn.onclick = function(e) {
+            chatSocket.send(JSON.stringify({
+                'type': 'leave_room'
+            }));
+        };
+    }
+</script>
+{% endblock %}
