@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
 
@@ -25,14 +26,11 @@ class Question(models.Model):
 
 class Room(models.Model):
     room_name = models.CharField(max_length=50)
-    max_user_num = models.IntegerField(default=6)
     discussion_time = models.IntegerField(default=3, help_text="討論時間（分）")
     category = models.CharField(max_length=50, default='all', help_text="お題のカテゴリ")
     
-    @property
-    def is_full(self):
-        return self.members.count() >= self.max_user_num
-
+    host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='hosted_rooms')
+    
     class Status(models.TextChoices):
         WAITING = 'waiting', '待機中'
         PLAYING = 'playing', 'プレイ中'

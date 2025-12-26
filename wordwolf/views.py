@@ -97,8 +97,13 @@ def create_game(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
-            room = form.save()
-            # 作成者をメンバーに追加
+
+            room = form.save(commit=False)
+
+            room.host = request.user
+
+            room.save()
+
             Member.objects.create(user=request.user, room=room)
             return redirect('wordwolf:room_detail', room_id=room.id)
     else:
@@ -108,10 +113,8 @@ def create_game(request):
 @login_required
 def room_detail(request, room_id):
     room = get_object_or_404(Room, id=room_id)
-    # メンバーかどうか確認し、メンバーでなければ追加（定員チェックが必要）
+    # メンバーかどうか確認し、メンバーでなければ追加
     if not Member.objects.filter(user=request.user, room=room).exists():
-        if room.is_full:
-            return redirect('wordwolf:lobby') # 満員ならロビーへ
         Member.objects.create(user=request.user, room=room)
     
     members = Member.objects.filter(room=room)

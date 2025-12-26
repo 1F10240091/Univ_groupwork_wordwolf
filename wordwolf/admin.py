@@ -89,7 +89,7 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('room_name', 'status', 'max_user_num', 'created_at')
+    list_display = ('room_name', 'status', 'created_at')
     list_filter = ('status',)
     search_fields = ('room_name',)
 
