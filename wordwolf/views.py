@@ -3,8 +3,16 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from .forms import SignUpForm, UserUpdateForm, RoomForm
+from django.contrib.auth.views import PasswordResetView
+from .forms import SignUpForm, UserUpdateForm, RoomForm, EmailValidationPasswordResetForm
 from .models import Room, User, Member
+
+class CustomPasswordResetView(PasswordResetView):
+    form_class = EmailValidationPasswordResetForm
+    template_name = 'registration/password_reset_form.html'
+    email_template_name = 'registration/password_reset_email.html'
+    subject_template_name = 'registration/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
 
 class SignUpView(generic.CreateView):
     form_class = SignUpForm

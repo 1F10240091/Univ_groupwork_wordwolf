@@ -133,3 +133,6 @@ AUTH_USER_MODEL = 'wordwolf.User'
 LOGIN_REDIRECT_URL = 'wordwolf:home'
 
 LOGOUT_REDIRECT_URL = 'login'
+# Email Backend for Development
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'config.email_backend.SimpleConsoleEmailBackend'

@@ -19,10 +19,12 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.contrib.auth.views import LoginView
 from wordwolf.forms import LoginForm
+from wordwolf.views import CustomPasswordResetView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/login/', LoginView.as_view(authentication_form=LoginForm), name='login'),
+    path('accounts/password_reset/', CustomPasswordResetView.as_view(), name='password_reset'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('wordwolf/', include('wordwolf.urls')),
     path('', RedirectView.as_view(url='/wordwolf/', permanent=True)),
