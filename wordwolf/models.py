@@ -5,9 +5,19 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     win_num = models.IntegerField(default=0)
     lose_num = models.IntegerField(default=0)
+    
+    friends = models.ManyToManyField('self', blank=True)
     def __str__(self):
         return self.username
 
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(User, related_name='sent_friend_requests', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(User, related_name='received_friend_requests', on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.from_user} -> {self.to_user}"
+    
 class WordSet(models.Model):
     main_word = models.CharField(max_length=100)
     wolf_word = models.CharField(max_length=100)

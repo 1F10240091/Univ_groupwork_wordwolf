@@ -96,3 +96,11 @@
 .friend-name {
   font-weight: 500;
 }
+/* friend.css に追加 */
+.default-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ccc; /* グレーの丸 */
+  margin-right: 12px;
+}

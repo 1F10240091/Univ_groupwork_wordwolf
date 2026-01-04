@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, UserUpdateForm
-from .models import Room, User
+from .models import Room, User, FriendRequest
 
 class SignUpView(generic.CreateView):
     form_class = SignUpForm
@@ -59,26 +59,77 @@ def game(request):
 
 @login_required
 def friend_list(request):
+    friend_requests = FriendRequest.objects.filter(to_user=request.user)
+    friends = request.user.friends.all()
+
     context = {
-        'friend_requests': [],
-        'friends': [],
+        'friend_requests': friend_requests,
+        'friends': friends,
     }
     return render(request, 'wordwolf/friend.html', context)
-
 @login_required
 def search_user(request):
+    query = request.GET.get('query')
+    search_results = []
+    
+    if query:
+        search_results = User.objects.filter(
+            username__icontains=query
+        ).exclude(id=request.user.id)
+    
+    return render(request, 'wordwolf/search_results.html', {
+        'users': search_results, 
+        'query': query
+    })
+
+@login_required
+def send_request(request, user_id):
+    if request.method == 'POST':
+        target_user = get_object_or_404(User, id=user_id)
+        
+        if target_user not in request.user.friends.all():
+            existing_request = FriendRequest.objects.filter(
+                from_user=request.user, 
+                to_user=target_user
+            ).exists()
+            
+            reverse_request = FriendRequest.objects.filter(
+                from_user=target_user,
+                to_user=request.user
+            ).exists()
+
+            if not existing_request and not reverse_request:
+                FriendRequest.objects.create(from_user=request.user, to_user=target_user)
+
     return redirect('wordwolf:friend_list')
 
 @login_required
 def approve_request(request, request_id):
+    if request.method == 'POST':
+        friend_request = get_object_or_404(FriendRequest, id=request_id)
+        
+        if friend_request.to_user == request.user:
+            request.user.friends.add(friend_request.from_user)
+            
+            friend_request.delete()
+            
     return redirect('wordwolf:friend_list')
 
 @login_required
 def reject_request(request, request_id):
+    if request.method == 'POST':
+        friend_request = get_object_or_404(FriendRequest, id=request_id)
+        
+        if friend_request.to_user == request.user:
+            friend_request.delete()
     return redirect('wordwolf:friend_list')
 
 @login_required
 def remove_friend(request, user_id):
+    if request.method == 'POST':
+        friend_to_remove = get_object_or_404(User, id=user_id)
+        
+        request.user.friends.remove(friend_to_remove)
     return redirect('wordwolf:friend_list')
   
 def ranking(request):
