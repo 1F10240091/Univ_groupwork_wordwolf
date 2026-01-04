@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from .forms import SignUpForm, UserUpdateForm
-from .models import Room, User, FriendRequest
+from .forms import SignUpForm, UserUpdateForm, RoomForm
+from .models import Room, User, Member, FriendRequest
 
 class SignUpView(generic.CreateView):
     form_class = SignUpForm
@@ -142,3 +142,31 @@ def ranking(request):
             'games_played': user.win_num + user.lose_num
         })
     return render(request, 'wordwolf/ranking.html', {'ranking_list': ranking_list})
+
+@login_required
+def create_game(request):
+    if request.method == 'POST':
+        form = RoomForm(request.POST)
+        if form.is_valid():
+
+            room = form.save(commit=False)
+
+            room.host = request.user
+
+            room.save()
+
+            Member.objects.create(user=request.user, room=room)
+            return redirect('wordwolf:room_detail', room_id=room.id)
+    else:
+        form = RoomForm()
+    return render(request, 'wordwolf/create_game.html', {'form': form})
+
+@login_required
+def room_detail(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    # メンバーかどうか確認し、メンバーでなければ追加
+    if not Member.objects.filter(user=request.user, room=room).exists():
+        Member.objects.create(user=request.user, room=room)
+    
+    members = Member.objects.filter(room=room)
+    return render(request, 'wordwolf/room_detail.html', {'room': room, 'members': members})

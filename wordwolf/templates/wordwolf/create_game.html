@@ -1,0 +1,29 @@
+{% extends 'card_layout.html' %}
+
+{% block title %}Create Game - WordWolf{% endblock %}
+
+{% block card_content %}
+<h1 class="mb-4 text-accent">Create Game</h1>
+
+<form method="post">
+    {% csrf_token %}
+    
+    {% for field in form %}
+    <div class="mb-3 text-start">
+        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+            <div class="form-text text-muted small">{{ field.help_text }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+            <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    <div class="d-grid gap-3 mt-4">
+        <button type="submit" class="btn btn-accent btn-lg">ルームを作成</button>
+        <a href="{% url 'wordwolf:lobby' %}" class="btn btn-outline-secondary">ロビーに戻る</a>
+    </div>
+</form>
+{% endblock %}

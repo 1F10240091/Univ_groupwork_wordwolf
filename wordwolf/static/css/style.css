@@ -1,52 +1,400 @@
-/* 変数定義 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap');
+
+/* ==========================================================================
+   1. Variables
+   ========================================================================== */
 :root {
-    --accent-color: #333; /* アクセントカラー */
-    --accent-hover: #555;
+    /* Color Palette */
+    --bg-gradient-start: #050505;
+    --bg-gradient-end: #2b0505;
+    
+    --card-bg: rgba(20, 20, 20, 0.9);
+    --text-main: #f0f0f0;
+    --text-muted: #b0b0b0;
+    
+    /* Accent Colors */
+    --accent-color: #c62828;
+    --accent-gradient: linear-gradient(135deg, #b71c1c 0%, #5f0a0a 100%);
+    --accent-shadow: rgba(183, 28, 28, 0.6);
+
+    /* Secondary Colors */
+    --secondary-bg: #333333;
+    --input-bg: #1a1a1a;
+    --input-border: #444;
 }
 
-/* --- 共通コンポーネント --- */
+/* ==========================================================================
+   2. Base Styles
+   ========================================================================== */
 html, body {
     height: 100%;
-}
-/* ページのメインタイトル */
-.page-title {
-    color: var(--accent-color);
-    text-align: center;
-    margin-bottom: 1.5rem; /* mb-4 相当 */
-    font-weight: bold;
+    font-family: 'Noto Serif JP', serif;
+    background: linear-gradient(to bottom, var(--bg-gradient-start), var(--bg-gradient-end));
+    background-attachment: fixed;
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
 }
 
-/* コンテンツを囲むカード */
-.content-card {
-    margin-top: 3rem; /* mt-5 相当 */
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* 影をつけて浮き上がらせる */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    font-weight: 700;
 }
 
-/* アクセントカラーのテキスト */
-.text-accent {
-    color: var(--accent-color);
-}
-
-/* --- ボタン --- */
-.btn-accent {
-    background-color: var(--accent-color);
-    color: white;
-    border: 1px solid black;
-    transition: all 0.3s;
-}
-
-.btn-accent:hover {
-    background-color: var(--accent-hover);
-    color: white;
-}
-
-/* --- リンク --- */
-.auth-link {
+a {
     color: var(--accent-color);
     text-decoration: none;
 }
 
+a:hover {
+    color: #ff5252;
+}
+
+label {
+    color: var(--text-main);
+}
+
+/* ==========================================================================
+   3. Layout & Cards
+   ========================================================================== */
+.container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.content-card {
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    border: 1px solid #333;
+    border-radius: 4px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-body {
+    padding: 2.5rem;
+}
+
+/* ==========================================================================
+   4. Typography
+   ========================================================================== */
+.page-title {
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    padding-bottom: 1rem;
+    letter-spacing: 0.1em;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* Title Decoration Line */
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+    box-shadow: 0 1px 0 rgba(138, 0, 0, 0.5);
+    opacity: 0.8;
+}
+
+.text-accent {
+    color: var(--accent-color);
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(198, 40, 40, 0.4);
+}
+
+.text-muted {
+    color: #b0b0b0 !important;
+}
+
+/* ==========================================================================
+   5. Components
+   ========================================================================== */
+
+/* --- Buttons --- */
+.btn {
+    border-radius: 2px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    letter-spacing: 0.05em;
+}
+
+.btn-accent {
+    background: var(--accent-gradient);
+    border: 1px solid #5f0a0a;
+    color: #ffdddd;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.btn-accent:hover, .btn-accent:focus {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px var(--accent-shadow);
+    border-color: #ff5252;
+}
+
+.btn-accent:disabled {
+    background: #444;
+    border-color: #555;
+    color: #888;
+    box-shadow: none;
+    transform: none;
+}
+
+.btn-outline-secondary {
+    border: 1px solid #666;
+    color: #aaa;
+    background: transparent;
+}
+
+.btn-outline-secondary:hover {
+    border-color: #fff;
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+.btn-outline-primary {
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--accent-gradient);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 0 15px var(--accent-shadow);
+}
+
+.btn-outline-info {
+    border: 1px solid #17a2b8;
+    color: #17a2b8;
+}
+
+.btn-outline-info:hover {
+    background-color: rgba(23, 162, 184, 0.2);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(23, 162, 184, 0.4);
+}
+
+.btn-outline-danger {
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.4);
+}
+
+/* --- Forms --- */
+.form-control {
+    border-radius: 2px;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: #fff;
+}
+
+.form-control:focus {
+    background-color: #000;
+    border-color: var(--accent-color);
+    color: #fff;
+    box-shadow: 0 0 0 0.25rem rgba(198, 40, 40, 0.25);
+}
+
+.form-control::placeholder {
+    color: #666;
+}
+
+.form-floating > label {
+    padding-left: 1rem;
+    color: #bbb;
+    background-color: transparent !important;
+}
+
+.form-floating > .form-control:focus ~ label::after,
+.form-floating > .form-control:not(:placeholder-shown) ~ label::after {
+    background-color: transparent !important;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: #ddd;
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+/* --- Links & Auth --- */
+.auth-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
 .auth-link:hover {
+    color: #ff5252;
     text-decoration: underline;
+    text-shadow: 0 0 5px var(--accent-color);
+}
+
+.auth-footer-text {
+    color: #fff;
+    font-size: 1.1em;
+}
+
+/* --- List Groups --- */
+.list-group-item {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: none;
+    border-bottom: 1px solid #333;
+    padding: 1rem 1.5rem;
+    color: var(--text-main);
+    transition: all 0.2s;
+}
+
+.list-group-item:first-child {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.list-group-item-action:hover {
+    background-color: rgba(198, 40, 40, 0.1);
+    color: #fff;
+    padding-left: 1.8rem;
+}
+
+/* --- Badges & Alerts --- */
+.badge {
+    padding: 0.5em 0.8em;
+    font-weight: 500;
+    border-radius: 2px;
+}
+
+.bg-primary {
+    background: #444 !important;
+    border: 1px solid #666;
+    color: #ddd;
+}
+
+.bg-danger {
+    background: #5a0000 !important;
+    border: 1px solid #a00;
+    color: #ffcccc;
+}
+
+.alert-danger {
+    background-color: rgba(100, 0, 0, 0.3);
+    border-color: #800;
+    color: #ffcccc;
+}
+
+.bg-light {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: #444 !important;
+    color: var(--text-main) !important;
+}
+
+/* --- Avatars --- */
+.avatar-placeholder {
+    background: #1a1a1a !important;
+    color: #666 !important;
+    border: 1px solid #333;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+}
+
+/* ==========================================================================
+   6. Tables & Ranking
+   ========================================================================== */
+.table {
+    color: var(--text-main);
+    border-color: #444;
+}
+
+.table > :not(caption) > * > * {
+    background-color: transparent;
+    border-bottom-color: #333;
+    color: var(--text-main);
+}
+
+.table thead th {
+    border-bottom: 2px solid var(--accent-color);
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+/* Ranking Specifics */
+.top-rank td {
+    font-weight: bold;
+    font-size: 1.5em;
+    vertical-align: middle;
+}
+
+.rank-1 td {
+    color: #ffd700; /* Gold */
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.rank-2 td {
+    color: #c0c0c0; /* Silver */
+    text-shadow: 0 0 5px rgba(192, 192, 192, 0.5);
+}
+
+.rank-3 td {
+    color: #cd7f32; /* Bronze */
+    text-shadow: 0 0 5px rgba(205, 127, 50, 0.5);
+}
+
+.rank-col {
+    width: 60px;
+    text-align: center;
+}
+
+.rank-cell {
+    width: 60px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    padding: 2px !important;
+    line-height: 1;
+}
+
+.medal-icon {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    background-image: url('../images/medals.png');
+    background-size: 120px auto;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+
+.medal-1 { background-position: 0 0; }
+.medal-2 { background-position: -40px 0; }
+.medal-3 { background-position: -80px 0; }
+
+.score-data {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.1em;
 }
