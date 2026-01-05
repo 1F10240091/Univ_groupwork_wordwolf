@@ -80,6 +80,7 @@ class Member(models.Model):
     joined_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.user.username} in {self.room.room_name}"
+    
 
 class ChatMessage(models.Model):
     room = models.ForeignKey(
@@ -100,4 +101,5 @@ class ChatMessage(models.Model):
         ordering = ['timestamp']
 
     def __str__(self):
-        return f"[{self.room.room_name}] {self.user.username}: {self.message[:20]}"
+        username = self.user.username if self.user else "システム"
+        return f"{username}: {self.message}"

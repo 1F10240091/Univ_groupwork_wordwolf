@@ -14,7 +14,15 @@ const gameSocket = connectGameSocket(gameData.roomId, (data) => {
         case 'chat_message':
             displayChatMessage(data.sender_name, data.message);
             break;
-            
+        
+        case 'system_message':
+            displayChatMessage(null, data.message);
+            break;
+        
+        case 'member_list':
+            displayMembers(data.members);
+            break;
+        
         default:
             console.log("未定義のメッセージを受信:", data);
     }
@@ -35,9 +43,22 @@ function displayChatMessage(name, message) {
     const messageElement = document.createElement('div');
 
     messageElement.innerHTML = `
-        <span class="fw-bold text-primary">${name}</span>: 
+        <span class="fw-bold text-primary">${name ?? "システム"}</span>: 
         <span>${message}</span>
     `;
 
     chatLog.appendChild(messageElement);
+}
+
+function displayMembers(members) {
+    const memberListContainer = document.querySelector('#member-list');
+    if (!memberListContainer) return;
+
+    memberListContainer.innerHTML = '';
+    members.forEach(username => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.textContent = username;
+        memberListContainer.appendChild(li);
+    });
 }
