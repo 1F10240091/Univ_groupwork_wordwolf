@@ -141,3 +141,11 @@
 .form-text, .text-muted {
     color: #b0b0b0 !important;
 }
+
+.default-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin-right: 12px;
+}

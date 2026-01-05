@@ -58,9 +58,7 @@
                 {% for friend in friends %}
                 <li class="friend-item">
                     <div class="friend-info">
-                        {% if friend.icon %}
-                            <img src="{{ friend.icon.url }}" alt="icon" class="user-icon">
-                        {% endif %}
+                        <div class="user-icon default-icon"></div>
                         <span class="friend-name">{{ friend.username }}</span>
                     </div>
                     
