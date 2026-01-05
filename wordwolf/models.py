@@ -80,3 +80,24 @@ class Member(models.Model):
     joined_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.user.username} in {self.room.room_name}"
+
+class ChatMessage(models.Model):
+    room = models.ForeignKey(
+        Room, 
+        on_delete=models.CASCADE, 
+        related_name='chat_messages'
+    )
+    user = models.ForeignKey(
+        User, 
+        null=True,
+        on_delete=models.CASCADE, 
+        related_name='chat_messages'
+    )
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_system = models.BooleanField(default=False)
+    class Meta:
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return f"[{self.room.room_name}] {self.user.username}: {self.message[:20]}"

@@ -5,7 +5,13 @@ const gameData = JSON.parse(document.getElementById('game-data').textContent);
 
 const gameSocket = connectGameSocket(gameData.roomId, (data) => {
     switch (data.type) {
-        case 'chat_message': // チャットメッセージ
+        case 'chat_log':
+            data.messages.forEach(msg => {
+                displayChatMessage(msg.sender_name, msg.message);
+            });
+            break;
+
+        case 'chat_message':
             displayChatMessage(data.sender_name, data.message);
             break;
             
