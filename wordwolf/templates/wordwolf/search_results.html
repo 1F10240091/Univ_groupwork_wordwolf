@@ -1,29 +1,35 @@
-{% extends 'base.html' %}
+{% extends 'card_layout.html' %}
 {% load static %}
 
-{% block content %}
-<div class="friend-container" style="max-width: 600px; margin: 30px auto; padding: 25px; background: #fff; border-radius: 8px;">
-    <h2>"{{ query }}" の検索結果</h2>
+{% block title %}ユーザー検索結果{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/friend.css' %}">
+{% endblock %}
+
+{% block card_content %}
+<div class="friend-manage-area text-start">
+    <h1 class="page-title mb-4" style="font-size: 1.5rem;">"{{ query }}" の検索結果</h1>
     
-    <ul style="list-style: none; padding: 0;">
+    <ul class="list-unstyled">
         {% for user in users %}
-        <li style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee;">
+        <li class="friend-item">
             <span>{{ user.username }}</span>
             
             <form action="{% url 'wordwolf:send_request' user.id %}" method="POST">
                 {% csrf_token %}
-                <button type="submit" style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                <button type="submit" class="btn-approve">
                     申請する
                 </button>
             </form>
         </li>
         {% empty %}
-            <p>ユーザーが見つかりませんでした。</p>
+            <p class="text-muted">ユーザーが見つかりませんでした。</p>
         {% endfor %}
     </ul>
     
-    <div style="margin-top: 20px;">
-        <a href="{% url 'wordwolf:friend_list' %}" class="btn btn-secondary">フレンド一覧に戻る</a>
+    <div class="mt-4 text-center">
+        <a href="{% url 'wordwolf:friend_list' %}" class="btn btn-outline-secondary">フレンド一覧に戻る</a>
     </div>
 </div>
 {% endblock %}
