@@ -398,3 +398,7 @@ label {
     font-family: 'Courier New', monospace;
     letter-spacing: 0.1em;
 }
+
+.form-text, .text-muted {
+    color: #b0b0b0 !important;
+}
