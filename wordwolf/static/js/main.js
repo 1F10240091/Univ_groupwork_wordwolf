@@ -18,6 +18,60 @@ const playerLists = document.querySelectorAll('.player-list-container');
 
 let startModal = null; // モーダルインスタンスを保持
 let voteProposalModal = null; // 投票提案モーダル
+let infoModal = null; // 汎用情報モーダル
+let confirmModal = null; // 汎用確認モーダル
+
+const infoModalEl = document.getElementById('infoModal');
+if (infoModalEl) {
+    infoModal = new bootstrap.Modal(infoModalEl);
+}
+
+const confirmModalEl = document.getElementById('confirmModal');
+let confirmCallback = null;
+if (confirmModalEl) {
+    confirmModal = new bootstrap.Modal(confirmModalEl);
+    document.getElementById('confirm-modal-ok-btn').addEventListener('click', () => {
+        if (confirmCallback) confirmCallback();
+        confirmModal.hide();
+    });
+}
+
+// システムメッセージ表示関数
+function addSystemMessage(text) {
+    const chatWindow = document.getElementById('chat-window');
+    if (!chatWindow) return;
+    
+    const div = document.createElement('div');
+    div.className = 'system-message';
+    div.textContent = text;
+    chatWindow.appendChild(div);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+// 汎用確認関数
+function showConfirm(text, callback) {
+    if (confirmModal) {
+        document.getElementById('confirm-modal-text').innerText = text; // 改行対応のためinnerText
+        confirmCallback = callback;
+        confirmModal.show();
+    } else {
+        if (confirm(text)) callback();
+    }
+}
+
+// 汎用アラート関数
+function showInfo(text, callback) {
+    if (infoModal) {
+        document.getElementById('info-modal-text').innerText = text;
+        infoModal.show();
+        if (callback) {
+            infoModalEl.addEventListener('hidden.bs.modal', callback, { once: true });
+        }
+    } else {
+        alert(text);
+        if (callback) callback();
+    }
+}
 
 const voteProposalModalEl = document.getElementById('voteProposalModal');
 if (voteProposalModalEl) {
@@ -187,22 +241,22 @@ socket.onmessage = function(e) {
 
             // タイマー開始 (残り時間で)
             if (info.remaining_seconds > 0) {
-                startTimer(info.remaining_seconds, () => {
-                    alert('議論終了！投票に移ります。');
-                    createVoteUI(window.gameMembers || []); 
-                    if (forceBtn) forceBtn.classList.add('d-none');
-                });
-            }
+            startTimer(info.remaining_seconds, () => {
+                addSystemMessage('議論時間が終了しました。投票に移ってください。');
+                createVoteUI(window.gameMembers || []); 
+                if (forceBtn) forceBtn.classList.add('d-none');
+            });
+        }
 
-        } else if (info.phase === 'discussing_finished') {
-             // 議論時間終了後（投票待ち状態）
-             if (startModal) startModal.hide();
-             topicText.textContent = "議論終了";
-             createVoteUI(window.gameMembers || []);
-             const forceBtn = document.getElementById('force-vote-btn');
-             if (forceBtn) forceBtn.classList.add('d-none');
-        
-        } else if (info.phase === 'voting') {
+    } else if (data.type === 'discussing_finished') {
+            // 議論時間終了後（投票待ち状態）
+            if (startModal) startModal.hide();
+            topicText.textContent = "議論終了";
+            createVoteUI(window.gameMembers || []);
+            const forceBtn = document.getElementById('force-vote-btn');
+            if (forceBtn) forceBtn.classList.add('d-none');
+    
+    } else if (data.type === 'voting') {
             // 投票中
             if (startModal) startModal.hide();
             topicText.textContent = "投票中";
@@ -233,7 +287,7 @@ socket.onmessage = function(e) {
         if (window.discussionDuration) {
             startTimer(window.discussionDuration, () => {
                 // 自動終了時の処理（もしボタンより先に終わった場合）
-                alert('議論終了！投票に移ります。');
+                addSystemMessage('議論時間が終了しました。投票に移ります。');
                 createVoteUI(window.gameMembers || []); 
                 
                 // 強制投票ボタンを隠す
@@ -265,13 +319,13 @@ socket.onmessage = function(e) {
 
     } else if (data.type === 'vote_proposal_rejected') {
         if (voteProposalModal) voteProposalModal.hide();
-        alert(`誰かが提案を拒否したため、議論を続行します。`);
+        showInfo(`誰かが提案を拒否したため、議論を続行します。`);
 
     } else if (data.type === 'start_vote_phase') {
         // 強制的に投票フェーズへ以降
         if (voteProposalModal) voteProposalModal.hide();
         stopTimer(); // タイマー停止
-        alert('投票フェーズへ移行します。');
+        addSystemMessage('投票フェーズへ移行します。');
         createVoteUI(window.gameMembers || []);
         
         // ボタンはもういらない
@@ -361,13 +415,15 @@ socket.onmessage = function(e) {
         } else {
             // 万が一モーダルがない場合のフォールバック
             const msg = `勝者: ${result.winner}\n\n人狼: ${result.wolves.join(', ')}\n\nロビーに戻ります。`;
-            alert(msg);
-            window.location.href = '/wordwolf/lobby/';
+            showInfo(msg, () => {
+                window.location.href = '/wordwolf/lobby/';
+            });
         }
         
     } else if (data.type === 'room_dissolved') {
-        alert('ルームが解散されました。');
-        window.location.href = '/wordwolf/lobby/';
+        showInfo('ルームが解散されました。', () => {
+            window.location.href = '/wordwolf/lobby/';
+        });
     }
 };
 
@@ -392,11 +448,11 @@ if (confirmBtn) {
 const forceVoteBtn = document.getElementById('force-vote-btn');
 if (forceVoteBtn) {
     forceVoteBtn.addEventListener('click', () => {
-        if(confirm('議論を終了して投票に移ることを提案しますか？\n（全員の同意が必要です）')) {
+        showConfirm('議論を終了して投票に移ることを提案しますか？\n（全員の同意が必要です）', () => {
             socket.send(JSON.stringify({
                 'type': 'request_vote_phase'
             }));
-        }
+        });
     });
 }
 
@@ -424,8 +480,8 @@ if (chatInput) {
 const exitBtn = document.getElementById('exit-room-btn');
 if (exitBtn) {
     exitBtn.addEventListener('click', () => {
-        if(confirm('本当に退出しますか？')) {
+        showConfirm('本当に退出しますか？', () => {
              window.location.href = '/wordwolf/lobby/';
-        }
+        });
     });
 }

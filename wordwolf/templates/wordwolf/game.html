@@ -111,6 +111,33 @@
     </div>
   </div>
 </div>
+
+<!-- 汎用メッセージモーダル (Alert代わり) -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-body p-4">
+        <p id="info-modal-text" class="fs-5 mb-4">...</p>
+        <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 確認モーダル (Confirm代わり) -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-body p-4">
+        <p id="confirm-modal-text" class="fs-5 mb-4">...</p>
+        <div class="d-flex justify-content-center gap-3">
+            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">キャンセル</button>
+            <button type="button" id="confirm-modal-ok-btn" class="btn btn-primary px-4">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
