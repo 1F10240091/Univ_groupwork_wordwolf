@@ -6,24 +6,92 @@
 {% block content %}
 <div class="container-fluid h-100 p-0">
     <div class="row h-100 g-0">
-        <!-- サイドバー -->
-        <div class="col-3 bg-light border-end d-flex flex-column h-100">
+        <!-- PC用サイドバー (md以上で表示) -->
+        <div class="col-md-3 bg-light border-end d-none d-md-flex flex-column h-100">
             {% include 'wordwolf/includes/_game_sidebar.html' %}
         </div>
         <!-- メイン画面 -->
-        <div class="col-md-9 d-flex flex-column">
-            <!-- ヘッダー -->
+        <div class="col-md-9 col-12 d-flex flex-column h-100">
             {% include 'wordwolf/includes/_game_header.html' %}
-            <!-- メイン -->
             <main id="chat-window" class="chat-area p-3 overflow-auto flex-grow-1">
-                <p>りんご</p>
+                <p class="text-muted small text-center">ゲームが開始されました。チャットで議論してください。</p>
             </main>
-            <!-- フッター -->
             {% include 'wordwolf/includes/_game_controls.html' %}
         </div>
     </div>
 </div>
 
-{% endblock %} {% block extra_js %}
+<!-- スマホ用サイドバー (Offcanvas) -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel" style="background-color: var(--secondary-bg); color: var(--text-main);">
+  <div class="offcanvas-header border-bottom border-secondary">
+    <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">メニュー</h5>
+    <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    {% include 'wordwolf/includes/_game_sidebar.html' %}
+  </div>
+</div>
+
+<div class="modal fade" id="startModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-body p-5">
+        <h2 class="mb-4 text-secondary">あなたのお題</h2>
+        <h1 class="display-4 fw-bold text-accent mb-4" id="modal-word-display">...</h1>
+        
+        <hr>
+        
+        <div id="confirmation-area">
+            <p class="mb-3 text-muted">お題を確認したらボタンを押してください。<br>全員が押すと議論が始まります。</p>
+            <button id="confirm-btn" class="btn btn-primary btn-lg w-100">
+                お題を確認しました
+            </button>
+        </div>
+        
+        <div id="waiting-area" class="d-none">
+            <p class="mb-3 text-muted">他の参加者の確認を待っています...</p>
+            <div class="progress mb-2">
+                <div id="confirmation-progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+            </div>
+            <p id="confirmation-status-text" class="small text-muted">0 / 0 人 完了</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 
+
+<!-- ゲーム開始確認モーダル -->
+<div class="modal fade" id="startModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="startModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header justify-content-center">
+        <h5 class="modal-title" id="startModalLabel">ゲーム開始！</h5>
+      </div>
+      <div class="modal-body">
+        <div id="confirmation-area">
+            <p class="mb-2">あなたのお題は...</p>
+            <h2 class="display-4 fw-bold text-primary mb-4" id="modal-word-display">???</h2>
+            <p class="mb-2">あなたの役職は <strong id="modal-role-display" class="text-danger">???</strong> です。</p>
+            <p class="text-muted small">お題を確認したらボタンを押してください。</p>
+            <button id="confirm-btn" class="btn btn-primary btn-lg w-100 mt-3">確認しました</button>
+        </div>
+        
+        <div id="waiting-area" class="d-none">
+            <h4 class="mb-3">他のプレイヤーを待っています...</h4>
+            <div class="progress mb-2">
+                <div id="confirmation-progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+            </div>
+            <p id="confirmation-status-text" class="text-muted">0 / ? 人 完了</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+{{ room.id|json_script:"room-id" }}
+{{ user.username|json_script:"user-name" }}
 <script type="module" src="{% static 'js/main.js' %}"></script>
 {% endblock %}

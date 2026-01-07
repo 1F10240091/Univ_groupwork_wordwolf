@@ -95,7 +95,7 @@ class RoomAdmin(admin.ModelAdmin):
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ('user', 'room', 'role', 'joined_at')
+    list_display = ('user', 'room', 'role')
     list_filter = ('room', 'role')
 
 # RoomQuestionは単純な中間テーブルに近いのでシンプルに登録

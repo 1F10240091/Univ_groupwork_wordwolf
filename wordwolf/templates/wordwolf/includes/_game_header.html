@@ -1,14 +1,42 @@
 <header class="game-header p-3 border-bottom flex-shrink-0">
     <div class="d-flex justify-content-between align-items-center">
-        <div id="current-topic">
-            <h3>💡 現在の議題: <span id="topic-text">議論開始</span></h3>
+        <div class="d-flex align-items-center">
+            <!-- スマホ用メニューボタン -->
+            <button class="btn btn-outline-secondary d-md-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
+                ☰
+            </button>
+            <div id="current-topic">
+                <h3 class="mb-0 fs-5">💡 <span class="d-none d-sm-inline">現在の議題: </span><span id="topic-text">議論開始</span></h3>
+            </div>
         </div>
-        <div id="my-word" class="mx-4">
+        
+        <div id="my-word" class="mx-2 mx-md-4 d-none d-sm-block">
             自分のお題: 
-            <span id="word-display" class="fw-bold me-2">りんご</span>
+            <span id="word-display" class="fw-bold me-2">???</span>
         </div>
+        
         <div id="time-limit">
-            <h4 class="text-danger">残り時間: <span id="time-display">00:00</span></h4>
+            <h4 class="text-danger mb-0 fs-5"><span class="d-none d-sm-inline">残り時間: </span><span id="time-display">00:00</span></h4>
         </div>
     </div>
+    <!-- スマホ用お題表示 (ヘッダー下部に表示) -->
+    <div class="d-sm-none mt-2 text-center small text-muted">
+        自分のお題: <span id="word-display-mobile" class="fw-bold text-white">???</span>
+    </div>
 </header>
+
+<script>
+    // お題が更新されたらスマホ用表示も更新する簡易スクリプト
+    const originalWordDisplay = document.getElementById('word-display');
+    const mobileWordDisplay = document.getElementById('word-display-mobile');
+    
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mobileWordDisplay) mobileWordDisplay.textContent = mutation.target.textContent;
+        });
+    });
+    
+    if (originalWordDisplay) {
+        observer.observe(originalWordDisplay, { childList: true, characterData: true, subtree: true });
+    }
+</script>

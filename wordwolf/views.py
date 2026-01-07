@@ -54,8 +54,16 @@ def lobby(request):
         'query': query,
     })
 
+@login_required
 def game(request):
-    return render(request, 'wordwolf/game.html', {})
+    member = Member.objects.filter(user=request.user, room__status='playing').first()
+    
+    if not member:
+        return redirect('wordwolf:lobby')
+    
+    return render(request, 'wordwolf/game.html', {
+        'room': member.room,
+    })
 
 @login_required
 def friend_list(request):

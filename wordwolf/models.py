@@ -67,26 +67,17 @@ class RoomQuestion(models.Model):
         return f"{self.room} - Q{self.order}"
 
 class Member(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='members')
-
     class Role(models.TextChoices):
-        WOLF = 'wolf', '狼'
         CITIZEN = 'citizen', '市民'
-    role = models.CharField(
-        max_length=20,
-        choices=Role.choices,
-        default=Role.CITIZEN
-    )
+        WOLF = 'wolf', '人狼'
 
-    word = models.CharField(max_length=100, blank=True)
-    vote_target = models.ForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='voted_by'
-    )
-    joined_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, related_name='members', on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=Role.choices, default=Role.CITIZEN)
+    word = models.CharField(max_length=100, blank=True, null=True)
+    vote_target = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='voted_by')
+    
+    is_confirmed = models.BooleanField(default=False)
+
     def __str__(self):
         return f"{self.user.username} in {self.room.room_name}"
