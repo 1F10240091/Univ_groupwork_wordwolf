@@ -2,7 +2,7 @@ import json
 import random
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Room, Member, WordSet, ChatMessage
+from .models import Room, Member, WordSet, ChatMessage, User
 
 class LobbyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
