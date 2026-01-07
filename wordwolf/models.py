@@ -44,6 +44,7 @@ class Room(models.Model):
     class Status(models.TextChoices):
         WAITING = 'waiting', '待機中'
         PLAYING = 'playing', 'プレイ中'
+        VOTING = 'voting', '投票中'
         FINISHED = 'finished', '終了'
     status = models.CharField(
         max_length=20,
@@ -53,9 +54,20 @@ class Room(models.Model):
 
     word_set = models.ForeignKey(WordSet, null=True, blank=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
+    discussion_end_time = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.room_name} ({self.status})"
+
+class ChatMessage(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='messages')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.content[:20]}"
+
 
 class RoomQuestion(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='questions')
@@ -78,6 +90,7 @@ class Member(models.Model):
     vote_target = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='voted_by')
     
     is_confirmed = models.BooleanField(default=False)
+    vote_consent = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username} in {self.room.room_name}"

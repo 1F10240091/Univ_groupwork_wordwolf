@@ -1,0 +1,200 @@
+[
+    {
+        "model": "wordwolf.wordset",
+        "pk": 1,
+        "fields": {
+            "main_word": "リンゴ",
+            "wolf_word": "ナシ",
+            "category": "食べ物"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 2,
+        "fields": {
+            "main_word": "コーヒー",
+            "wolf_word": "紅茶",
+            "category": "飲み物"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 3,
+        "fields": {
+            "main_word": "犬",
+            "wolf_word": "猫",
+            "category": "動物"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 4,
+        "fields": {
+            "main_word": "サッカー",
+            "wolf_word": "野球",
+            "category": "スポーツ"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 5,
+        "fields": {
+            "main_word": "先生",
+            "wolf_word": "医者",
+            "category": "職業"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 6,
+        "fields": {
+            "main_word": "夏",
+            "wolf_word": "冬",
+            "category": "自然"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 7,
+        "fields": {
+            "main_word": "ピザ",
+            "wolf_word": "ハンバーガー",
+            "category": "食べ物"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 8,
+        "fields": {
+            "main_word": "バラ",
+            "wolf_word": "チューリップ",
+            "category": "自然"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 9,
+        "fields": {
+            "main_word": "ギター",
+            "wolf_word": "ピアノ",
+            "category": "楽器"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 10,
+        "fields": {
+            "main_word": "車",
+            "wolf_word": "バイク",
+            "category": "乗り物"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 11,
+        "fields": {
+            "main_word": "映画",
+            "wolf_word": "ドラマ",
+            "category": "エンタメ"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 12,
+        "fields": {
+            "main_word": "寿司",
+            "wolf_word": "そば",
+            "category": "食べ物"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 13,
+        "fields": {
+            "main_word": "東京タワー",
+            "wolf_word": "スカイツリー",
+            "category": "建築"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 14,
+        "fields": {
+            "main_word": "パン",
+            "wolf_word": "ご飯",
+            "category": "食べ物"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 15,
+        "fields": {
+            "main_word": "青",
+            "wolf_word": "緑",
+            "category": "色"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 16,
+        "fields": {
+            "main_word": "ディズニー",
+            "wolf_word": "ユニバーサルスタジオ",
+            "category": "レジャー"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 17,
+        "fields": {
+            "main_word": "Instagram",
+            "wolf_word": "Twitter",
+            "category": "SNS"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 18,
+        "fields": {
+            "main_word": "映画館",
+            "wolf_word": "水族館",
+            "category": "レジャー"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 19,
+        "fields": {
+            "main_word": "既読スルー",
+            "wolf_word": "未読スルー",
+            "category": "SNS"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 20,
+        "fields": {
+            "main_word": "鬼ごっこ",
+            "wolf_word": "かくれんぼ",
+            "category": "遊び"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 21,
+        "fields": {
+            "main_word": "富士山",
+            "wolf_word": "エベレスト",
+            "category": "自然"
+        }
+    },
+    {
+        "model": "wordwolf.wordset",
+        "pk": 22,
+        "fields": {
+            "main_word": "ビーチ",
+            "wolf_word": "山岳",
+            "category": "旅行先"
+        }
+    }
+]

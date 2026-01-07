@@ -2,7 +2,7 @@ import json
 import random
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Room, Member, WordSet
+from .models import Room, Member, WordSet, ChatMessage
 
 class LobbyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -59,8 +59,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if message_type == 'start_game':
             if await self.is_host(user, self.room_id):
                 member_count = await self.get_member_count(self.room_id)
-                # テスト用に1人でも開始できるようにするか、本番通り3人以上にするか
-                if member_count >= 1: # デバッグ用に緩和中。本番は3
+                # 本番通り3人以上にする
+                if member_count >= 3: 
                     if await self.start_game_logic(self.room_id):
                         await self.channel_layer.group_send(
                             self.room_group_name,
@@ -84,6 +84,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             )
             
             if status['confirmed'] == status['total'] and status['total'] > 0:
+                await self.start_discussion_timer_db(self.room_id)
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {'type': 'start_discussion'}
@@ -94,6 +95,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         elif message_type == 'chat_message':
             message = data.get('message')
             if message:
+                await self.save_chat_message(user, self.room_id, message)
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -111,6 +113,43 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     'type': 'game_info',
                     'data': game_info
                 }))
+        
+        elif message_type == 'request_vote_phase':
+            # 投票フェーズへの移行提案
+            await self.set_vote_consent(user, self.room_id, True)
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'vote_proposal',
+                    'requester': user.username
+                }
+            )
+
+        elif message_type == 'respond_vote_proposal':
+            agree = data.get('agree', False)
+            if agree:
+                await self.set_vote_consent(user, self.room_id, True)
+                if await self.check_all_consented(self.room_id):
+                    # 全員同意したら投票開始（同意フラグのリセットは次のゲーム開始時でOK、あるいはここでリセット）
+                    await self.reset_all_consents(self.room_id)
+                    await self.set_room_status(self.room_id, Room.Status.VOTING) # ステータス更新
+                    await self.channel_layer.group_send(
+                        self.room_group_name,
+                        {'type': 'start_vote_phase'}
+                    )
+                else:
+                    # まだ全員ではないが、この人が同意したことを通知（任意）
+                    pass
+            else:
+                # 拒否された場合
+                await self.reset_all_consents(self.room_id)
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'vote_proposal_rejected',
+                        'rejecter': user.username
+                    }
+                )
 
         elif message_type == 'vote':
             target_name = data.get('target')
@@ -161,9 +200,16 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
 
     async def start_discussion(self, event):
+        # 最初の1回だけ、Discussion開始時間をDBに保存する（重なり防止）
+        # ただし、asyncio.group_sendで全員に送られるため、レシーバ側でやるのは筋が悪い
+        # 実際には confirm_start を受け取った処理の中でDB更新を行うべき
+        await self.send(text_data=json.dumps(event))
+
+    async def start_vote_phase(self, event):
         await self.send(text_data=json.dumps(event))
 
     async def chat_message(self, event):
+        # Chat log saving should happen at sender side, not here
         await self.send(text_data=json.dumps({
             'type': 'chat_message',
             'username': event['username'],
@@ -176,7 +222,41 @@ class RoomConsumer(AsyncWebsocketConsumer):
     async def game_result(self, event):
         await self.send(text_data=json.dumps(event))
 
+    async def vote_proposal(self, event):
+        await self.send(text_data=json.dumps(event))
+
+    async def vote_proposal_rejected(self, event):
+        await self.send(text_data=json.dumps(event))
+
     # --- DB Operations ---
+
+    @database_sync_to_async
+    def set_vote_consent(self, user, room_id, consent):
+        try:
+            room = Room.objects.get(id=room_id)
+            member = Member.objects.get(user=user, room=room)
+            member.vote_consent = consent
+            member.save()
+        except:
+            pass
+
+    @database_sync_to_async
+    def check_all_consented(self, room_id):
+        try:
+            room = Room.objects.get(id=room_id)
+            total = room.members.count()
+            consented = room.members.filter(vote_consent=True).count()
+            return total > 0 and total == consented
+        except:
+            return False
+
+    @database_sync_to_async
+    def reset_all_consents(self, room_id):
+        try:
+            room = Room.objects.get(id=room_id)
+            room.members.all().update(vote_consent=False)
+        except:
+            pass
 
     @database_sync_to_async
     def add_member(self, user, room_id):
@@ -258,6 +338,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 # 前回の投票などをリセット
                 member.vote_target = None
                 member.is_confirmed = False
+                member.vote_consent = False
                 member.save()
             
             return True
@@ -273,12 +354,48 @@ class RoomConsumer(AsyncWebsocketConsumer):
             
             # 全プレイヤー名のリスト
             all_members = [m.user.username for m in room.members.all()]
+
+            # チャット履歴取得
+            messages = []
+            for msg in room.messages.all().order_by('timestamp'):
+                messages.append({
+                    'username': msg.user.username,
+                    'message': msg.content,
+                    # 'timestamp': msg.timestamp.isoformat() 
+                })
+
+            phase = 'waiting'
             
+            # 残り時間の計算
+            remaining_seconds = 0
+            if room.status == Room.Status.VOTING:
+                phase = 'voting'
+            elif room.status == Room.Status.PLAYING:
+                if room.discussion_end_time:
+                    from django.utils import timezone
+                    now = timezone.now()
+                    remaining = (room.discussion_end_time - now).total_seconds()
+                    
+                    if remaining > 0:
+                        phase = 'discussing'
+                        remaining_seconds = int(remaining)
+                    else:
+                        # 時間切れだが、まだVOTINGステータスになっていない場合
+                        # 本来はタスクキューなどで切り替えるべきだが、
+                        # 今回はアクセス時に「時間切れ」として扱う
+                        phase = 'discussing_finished' 
+                        remaining_seconds = 0
+                else:
+                    phase = 'confirming'
+
             return {
                 'my_word': member.word,
-                'role': member.role, # クライアント側で表示するかはJS次第（通常は隠す）
+                'role': member.role,
                 'discussion_time': room.discussion_time,
-                'members': all_members
+                'members': all_members,
+                'phase': phase,
+                'remaining_seconds': remaining_seconds,
+                'chat_history': messages
             }
         except (Room.DoesNotExist, Member.DoesNotExist):
             return None
@@ -286,19 +403,26 @@ class RoomConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def register_vote(self, user, room_id, target_username):
         try:
+            print(f"DEBUG: register_vote called by {user.username} for {target_username}")
             room = Room.objects.get(id=room_id)
             voter = Member.objects.get(user=user, room=room)
             target_user = Member.objects.get(room=room, user__username=target_username)
             
             voter.vote_target = target_user
             voter.save()
+            print("DEBUG: Vote saved.")
             
             # 全員投票したかチェック
             total_members = room.members.count()
             voted_count = room.members.filter(vote_target__isnull=False).count()
             
+            print(f"DEBUG: total={total_members}, voted={voted_count}")
+            
             return total_members == voted_count
-        except Exception:
+        except Exception as e:
+            print(f"ERROR inside register_vote: {e}")
+            import traceback
+            traceback.print_exc()
             return False
 
     @database_sync_to_async
@@ -410,6 +534,36 @@ class RoomConsumer(AsyncWebsocketConsumer):
             Room.objects.get(id=room_id).delete()
         except Room.DoesNotExist:
             pass
+
+    @database_sync_to_async
+    def set_room_status(self, room_id, status):
+        try:
+            room = Room.objects.get(id=room_id)
+            room.status = status
+            room.save()
+        except Room.DoesNotExist:
+            pass
+
+    @database_sync_to_async
+    def start_discussion_timer_db(self, room_id):
+        try:
+            from django.utils import timezone
+            from datetime import timedelta
+            room = Room.objects.get(id=room_id)
+            if not room.discussion_end_time: # 既にセットされていなければセット
+                room.discussion_end_time = timezone.now() + timedelta(minutes=room.discussion_time)
+                room.save()
+        except Room.DoesNotExist:
+            pass
+
+    @database_sync_to_async
+    def save_chat_message(self, user, room_id, content):
+        try:
+            user = User.objects.get(id=user.id) # リフレッシュ
+            room = Room.objects.get(id=room_id)
+            ChatMessage.objects.create(room=room, user=user, content=content)
+        except Exception as e:
+            print(f"Error saving chat: {e}")
 
     @database_sync_to_async
     def confirm_user(self, user, room_id):

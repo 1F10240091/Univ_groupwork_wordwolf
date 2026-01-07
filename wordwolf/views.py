@@ -55,11 +55,15 @@ def lobby(request):
     })
 
 @login_required
-def game(request):
-    member = Member.objects.filter(user=request.user, room__status='playing').first()
+def game(request, room_id):
+    # 指定されたroom_idで、かつ自分がメンバーであるルームを探す
+    member = get_object_or_404(Member, user=request.user, room__id=room_id)
     
-    if not member:
-        return redirect('wordwolf:lobby')
+    # ルームの状態チェック（終了していたら入れないなど）
+    # ただし、結果表示画面などで使うかもしれないので、とりあえずステータスチェックは緩和するか要検討
+    # ここでは PLAYING, VOTING, FINISHED すべて許可するが、WAITINGならロビー(ルーム詳細)へ戻す
+    if member.room.status == Room.Status.WAITING:
+        return redirect('wordwolf:room_detail', room_id=room_id)
     
     return render(request, 'wordwolf/game.html', {
         'room': member.room,

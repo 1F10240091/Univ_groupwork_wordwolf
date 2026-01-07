@@ -21,6 +21,11 @@ class SignUpForm(UserCreationForm):
         fields = ('username', 'email', 'password1')
 
 class UserUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
     class Meta:
         model = User
         fields = ('username', 'email')
@@ -37,6 +42,9 @@ class RoomForm(forms.ModelForm):
 
         choices = [('all', 'すべて')] + [(c, c) for c in categories]
         self.fields['category'].choices = choices
+        
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
 
     class Meta:
         model = Room

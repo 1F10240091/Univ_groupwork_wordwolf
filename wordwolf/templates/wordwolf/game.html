@@ -36,7 +36,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content text-center">
       <div class="modal-body p-5">
-        <h2 class="mb-4 text-secondary">あなたのお題</h2>
+        <h2 class="mb-4">あなたのお題</h2>
         <h1 class="display-4 fw-bold text-accent mb-4" id="modal-word-display">...</h1>
         
         <hr>
@@ -60,35 +60,58 @@
     </div>
   </div>
 </div>
-{% endblock %} 
 
-<!-- ゲーム開始確認モーダル -->
-<div class="modal fade" id="startModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="startModalLabel" aria-hidden="true">
+<!-- ゲーム結果表示モーダル -->
+<div class="modal fade" id="resultModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content text-center">
+      <div class="modal-body p-5 text-white">
+        <h2 class="mb-4 fw-bold text-white">勝者</h2>
+        <h1 class="display-3 fw-bold text-success mb-5" id="result-winner" style="text-shadow: 0 0 10px rgba(25, 135, 84, 0.5);">...</h1>
+        
+        <div class="row mb-5">
+            <div class="col-6 border-end border-secondary">
+                <h4 class="mb-3 fw-bold text-white">人狼だったのは...</h4>
+                <div id="result-wolf-list">...</div>
+            </div>
+            <div class="col-6">
+                <h4 class="mb-3 fw-bold text-white">最多得票</h4>
+                <div id="result-votes-list" class="fs-5 text-white">...</div>
+            </div>
+        </div>
+
+        <button id="back-to-lobby-btn" class="btn btn-outline-info btn-lg px-5">
+            ロビーに戻る
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 投票提案モーダル -->
+<div class="modal fade" id="voteProposalModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content text-center">
-      <div class="modal-header justify-content-center">
-        <h5 class="modal-title" id="startModalLabel">ゲーム開始！</h5>
-      </div>
-      <div class="modal-body">
-        <div id="confirmation-area">
-            <p class="mb-2">あなたのお題は...</p>
-            <h2 class="display-4 fw-bold text-primary mb-4" id="modal-word-display">???</h2>
-            <p class="mb-2">あなたの役職は <strong id="modal-role-display" class="text-danger">???</strong> です。</p>
-            <p class="text-muted small">お題を確認したらボタンを押してください。</p>
-            <button id="confirm-btn" class="btn btn-primary btn-lg w-100 mt-3">確認しました</button>
+      <div class="modal-body p-4">
+        <h4 class="mb-3" id="proposal-text">...さんから投票への移行提案がありました</h4>
+        <p class="text-muted mb-4">全員が同意すると投票フェーズに移ります。</p>
+        
+        <div class="d-flex justify-content-center gap-3">
+            <button id="proposal-reject-btn" class="btn btn-outline-danger px-4">拒否</button>
+            <button id="proposal-agree-btn" class="btn btn-primary px-4">同意する</button>
         </div>
         
-        <div id="waiting-area" class="d-none">
-            <h4 class="mb-3">他のプレイヤーを待っています...</h4>
-            <div class="progress mb-2">
-                <div id="confirmation-progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+        <div id="proposal-waiting-msg" class="d-none mt-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
-            <p id="confirmation-status-text" class="text-muted">0 / ? 人 完了</p>
+            <p class="mt-2 mb-0">他の参加者の回答を待っています...</p>
         </div>
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
 
 {% block extra_js %}
 {{ room.id|json_script:"room-id" }}
