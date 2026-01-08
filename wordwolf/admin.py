@@ -41,7 +41,7 @@ class WordSetAdmin(admin.ModelAdmin):
         # デフォルトファイルを読み込む
         import os
         from django.conf import settings
-        file_path = os.path.join(settings.BASE_DIR, 'wordwolf', 'fixtures', 'words,json')
+        file_path = os.path.join(settings.BASE_DIR, 'wordwolf', 'fixtures', 'words.json')
         
         try:
             with open(file_path, 'rb') as f:
