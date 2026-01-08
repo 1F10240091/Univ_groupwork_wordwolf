@@ -232,7 +232,7 @@ socket.onmessage = function(e) {
 
         } else if (info.phase === 'discussing') {
             // 議論中
-            topicText.textContent = "議論中";
+            topicText.textContent = "ゲーム進行中";
             if (startModal) startModal.hide(); // モーダルを隠す
 
             // 強制投票ボタンを表示
@@ -281,7 +281,7 @@ socket.onmessage = function(e) {
         // 全員揃ったのでモーダルを閉じて開始！
         if (startModal) startModal.hide();
         
-        topicText.textContent = "議論中";
+        topicText.textContent = "ゲーム進行中";
         
         // タイマー開始
         if (window.discussionDuration) {
