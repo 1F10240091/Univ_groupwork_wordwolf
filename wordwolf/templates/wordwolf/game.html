@@ -16,14 +16,23 @@
             {% include 'wordwolf/includes/_game_header.html' %}
             <!-- メイン -->
             <main id="chat-window" class="chat-area p-3 overflow-auto flex-grow-1">
-                <p>りんご</p>
+                {% for msg in chat_messages %}
+                    <div><strong>{{ msg.user.username }}</strong>: {{ msg.message }}</div>
+                {% endfor %}
             </main>
             <!-- フッター -->
             {% include 'wordwolf/includes/_game_controls.html' %}
         </div>
     </div>
 </div>
-
 {% endblock %} {% block extra_js %}
 <script type="module" src="{% static 'js/main.js' %}"></script>
+{{ room.id|json_script:"room-id" }}
+{{ request.user.username|json_script:"user-name" }}
+<script id="game-data" type="application/json">
+    {
+        "roomId": "{{ room_id }}",
+        "userName": "{{ request.user.username }}"
+    }
+</script>
 {% endblock %}
