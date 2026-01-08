@@ -67,6 +67,7 @@ def friend_list(request):
         'friends': friends,
     }
     return render(request, 'wordwolf/friend.html', context)
+
 @login_required
 def search_user(request):
     query = request.GET.get('query')
@@ -133,7 +134,16 @@ def remove_friend(request, user_id):
     return redirect('wordwolf:friend_list')
   
 def ranking(request):
-    top_users = User.objects.order_by('-win_num')[:10]
+    # 追加：クエリパラメータで切り替え
+    order_by = request.GET.get('order_by', 'win')
+
+    if order_by == 'play':
+        users = list(User.objects.all())
+        users.sort(key=lambda u: (u.win_num + u.lose_num), reverse=True)
+        top_users = users[:10]
+    else:
+        top_users = User.objects.order_by('-win_num')[:10]
+
     ranking_list = []
     for user in top_users:
         ranking_list.append({
@@ -141,20 +151,18 @@ def ranking(request):
             'score': user.win_num,
             'games_played': user.win_num + user.lose_num
         })
-    return render(request, 'wordwolf/ranking.html', {'ranking_list': ranking_list})
+    # ▼ feature/8 の修正を採用（order_by を渡す）
+    return render(request, 'wordwolf/ranking.html', {'ranking_list': ranking_list, 'order_by': order_by})
 
+# ▼ HEAD にあった関数も残す
 @login_required
 def create_game(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
-
             room = form.save(commit=False)
-
             room.host = request.user
-
             room.save()
-
             Member.objects.create(user=request.user, room=room)
             return redirect('wordwolf:room_detail', room_id=room.id)
     else:
