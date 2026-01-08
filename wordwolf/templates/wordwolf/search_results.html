@@ -1,0 +1,35 @@
+{% extends 'card_layout.html' %}
+{% load static %}
+
+{% block title %}ユーザー検索結果{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/friend.css' %}">
+{% endblock %}
+
+{% block card_content %}
+<div class="friend-manage-area text-start">
+    <h1 class="page-title mb-4" style="font-size: 1.5rem;">"{{ query }}" の検索結果</h1>
+    
+    <ul class="list-unstyled">
+        {% for user in users %}
+        <li class="friend-item">
+            <span>{{ user.username }}</span>
+            
+            <form action="{% url 'wordwolf:send_request' user.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn-approve">
+                    申請する
+                </button>
+            </form>
+        </li>
+        {% empty %}
+            <p class="text-muted">ユーザーが見つかりませんでした。</p>
+        {% endfor %}
+    </ul>
+    
+    <div class="mt-4 text-center">
+        <a href="{% url 'wordwolf:friend_list' %}" class="btn btn-outline-secondary">フレンド一覧に戻る</a>
+    </div>
+</div>
+{% endblock %}

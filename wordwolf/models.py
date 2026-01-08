@@ -1,13 +1,24 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
     win_num = models.IntegerField(default=0)
     lose_num = models.IntegerField(default=0)
+    
+    friends = models.ManyToManyField('self', blank=True)
     def __str__(self):
         return self.username
 
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(User, related_name='sent_friend_requests', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(User, related_name='received_friend_requests', on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.from_user} -> {self.to_user}"
+    
 class WordSet(models.Model):
     main_word = models.CharField(max_length=100)
     wolf_word = models.CharField(max_length=100)
@@ -25,12 +36,11 @@ class Question(models.Model):
 
 class Room(models.Model):
     room_name = models.CharField(max_length=50)
-    max_user_num = models.IntegerField(default=6)
+    discussion_time = models.IntegerField(default=3, help_text="討論時間（分）")
+    category = models.CharField(max_length=50, default='all', help_text="お題のカテゴリ")
     
-    @property
-    def is_full(self):
-        return self.members.count() >= self.max_user_num
-
+    host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='hosted_rooms')
+    
     class Status(models.TextChoices):
         WAITING = 'waiting', '待機中'
         PLAYING = 'playing', 'プレイ中'

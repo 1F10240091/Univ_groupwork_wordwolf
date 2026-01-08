@@ -1,85 +1,122 @@
-/*全体のコンテナカード型にする*/
-.friend-container {
-  max-width: 600px;       
-  margin: 30px auto;      
-  padding: 25px;          
-  background-color: #fff; 
-  border-radius: 8px;      
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
-}
+/* ==========================================================================
+   Friend List Styles
+   ========================================================================== */
 
-.friend-container h2 {
-  margin-bottom: 0;
-  color: #333;
-}
+/* .friend-manage-area replaces .friend-container for inner content styling */
 
-.friend-container .section h3 {
-  font-size: 1.1em;
+.friend-manage-area .section h3 {
+  font-size: 1.2em;
   margin-bottom: 15px;
-  color: #555;
+  color: var(--text-muted);
+  font-family: 'Noto Serif JP', serif;
+  border-left: 3px solid var(--accent-color);
+  padding-left: 10px;
+  font-weight: 700;
 }
 
-.friend-container hr {
+.friend-manage-area hr {
   border: none;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #444;
   margin: 25px 0;
 }
 
-.friend-container .section ul {
+.friend-manage-area .section ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
 .request-item, .friend-item {
-  display: flex;          
+  display: flex;
   justify-content: space-between;
-  align-items: center; 
+  align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.friend-container button {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
+  border-bottom: 1px solid #333;
   transition: background-color 0.2s;
 }
 
-.btn-approve {
-  background-color: #28a745;
-  color: white;
-  margin-left: 10px; 
+.request-item:hover, .friend-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
 }
-.btn-approve:hover { background-color: #218838; } 
+
+/* Buttons */
+.friend-manage-area button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-family: 'Noto Serif JP', serif;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.btn-approve {
+  background-color: #1b5e20; /* Dark Green */
+  color: #e8f5e9;
+  margin-left: 10px;
+  border: 1px solid #2e7d32;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.btn-approve:hover {
+  background-color: #2e7d32;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(46, 125, 50, 0.5);
+}
 
 .btn-reject, .btn-delete {
-  background-color: #dc3545;
-  color: white;
+  background: var(--accent-gradient);
+  color: #ffdddd;
   margin-left: 10px;
+  border: 1px solid #5f0a0a;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
-.btn-reject:hover, .btn-delete:hover { background-color: #c82333; }
 
-/*検索フォーム*/
+.btn-reject:hover, .btn-delete:hover {
+  color: #fff;
+  box-shadow: 0 0 10px var(--accent-shadow);
+  border-color: #ff5252;
+}
+
+/* Search Form */
 .search-form {
-  display: flex; 
+  display: flex;
   gap: 10px;
 }
 
 .search-form input {
   flex-grow: 1;
   padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-.search-form button {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 2px;
+  color: #fff;
+  font-family: 'Noto Serif JP', serif;
 }
 
-/*フレンドリスト*/
+.search-form input:focus {
+  outline: none;
+  background-color: #000;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 5px var(--accent-shadow);
+}
+
+.search-form button {
+  background-color: #333;
+  color: var(--text-muted);
+  border: 1px solid #444;
+}
+
+.search-form button:hover {
+  background-color: var(--accent-color);
+  color: #fff;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 10px var(--accent-shadow);
+}
+
+/* Friend List Items */
 .friend-info {
   display: flex;
   align-items: center;
@@ -91,8 +128,24 @@
   border-radius: 50%;
   object-fit: cover;
   margin-right: 12px;
+  border: 1px solid #444;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
 .friend-name {
   font-weight: 500;
+  color: var(--text-main);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.form-text, .text-muted {
+    color: #b0b0b0 !important;
+}
+
+.default-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin-right: 12px;
 }

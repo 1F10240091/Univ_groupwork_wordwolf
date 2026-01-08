@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'card_layout.html' %}
 {% load static %}
 
 {% block title %}Friend{% endblock %}
@@ -7,11 +7,11 @@
 <link rel="stylesheet" href="{% static 'css/friend.css' %}">
 {% endblock %}
 
-{% block content %}
-<div class="friend-container">
+{% block card_content %}
+<div class="friend-manage-area text-start">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">フレンド管理</h2>
-        <a href="{% url 'wordwolf:profile' %}" class="btn btn-outline-secondary">プロフィールに戻る</a>
+        <h1 class="page-title mb-0" style="font-size: 1.8rem;">フレンド管理</h1>
+        <a href="{% url 'wordwolf:profile' %}" class="btn btn-outline-secondary btn-sm">戻る</a>
     </div>
 
     <div class="section requests">
@@ -21,19 +21,21 @@
                 {% for request in friend_requests %}
                 <li class="request-item">
                     <span>{{ request.from_user.username }} さんからの申請</span>
-                    <form action="{% url 'wordwolf:approve_request' request.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-approve">承認</button>
-                    </form>
-                    <form action="{% url 'wordwolf:reject_request' request.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-reject">拒否</button>
-                    </form>
+                    <div class="d-flex">
+                        <form action="{% url 'wordwolf:approve_request' request.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-approve">承認</button>
+                        </form>
+                        <form action="{% url 'wordwolf:reject_request' request.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-reject">拒否</button>
+                        </form>
+                    </div>
                 </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <p>現在、フレンド申請はありません。</p>
+            <p class="text-muted">現在、フレンド申請はありません。</p>
         {% endif %}
     </div>
 
@@ -56,9 +58,7 @@
                 {% for friend in friends %}
                 <li class="friend-item">
                     <div class="friend-info">
-                        {% if friend.icon %}
-                            <img src="{{ friend.icon.url }}" alt="icon" class="user-icon">
-                        {% endif %}
+                        <div class="user-icon default-icon"></div>
                         <span class="friend-name">{{ friend.username }}</span>
                     </div>
                     
@@ -70,7 +70,7 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p>まだフレンドがいません。</p>
+            <p class="text-muted">まだフレンドがいません。</p>
         {% endif %}
     </div>
 </div>
