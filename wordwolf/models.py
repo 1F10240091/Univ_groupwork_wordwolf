@@ -44,6 +44,7 @@ class Room(models.Model):
     class Status(models.TextChoices):
         WAITING = 'waiting', '待機中'
         PLAYING = 'playing', 'プレイ中'
+        VOTING = 'voting', '投票中'
         FINISHED = 'finished', '終了'
     status = models.CharField(
         max_length=20,
@@ -53,9 +54,20 @@ class Room(models.Model):
 
     word_set = models.ForeignKey(WordSet, null=True, blank=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
+    discussion_end_time = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.room_name} ({self.status})"
+
+class ChatMessage(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='messages')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.content[:20]}"
+
 
 class RoomQuestion(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='questions')
@@ -67,49 +79,18 @@ class RoomQuestion(models.Model):
         return f"{self.room} - Q{self.order}"
 
 class Member(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='members')
-
     class Role(models.TextChoices):
-        WOLF = 'wolf', '狼'
         CITIZEN = 'citizen', '市民'
-    role = models.CharField(
-        max_length=20,
-        choices=Role.choices,
-        default=Role.CITIZEN
-    )
+        WOLF = 'wolf', '人狼'
 
-    word = models.CharField(max_length=100, blank=True)
-    vote_target = models.ForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='voted_by'
-    )
-    joined_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, related_name='members', on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=Role.choices, default=Role.CITIZEN)
+    word = models.CharField(max_length=100, blank=True, null=True)
+    vote_target = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='voted_by')
+    
+    is_confirmed = models.BooleanField(default=False)
+    vote_consent = models.BooleanField(default=False)
+
     def __str__(self):
         return f"{self.user.username} in {self.room.room_name}"
-    
-
-class ChatMessage(models.Model):
-    room = models.ForeignKey(
-        Room, 
-        on_delete=models.CASCADE, 
-        related_name='chat_messages'
-    )
-    user = models.ForeignKey(
-        User, 
-        null=True,
-        on_delete=models.CASCADE, 
-        related_name='chat_messages'
-    )
-    message = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    is_system = models.BooleanField(default=False)
-    class Meta:
-        ordering = ['timestamp']
-
-    def __str__(self):
-        username = self.user.username if self.user else "システム"
-        return f"{username}: {self.message}"

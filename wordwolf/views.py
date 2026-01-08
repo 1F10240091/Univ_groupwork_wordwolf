@@ -54,8 +54,21 @@ def lobby(request):
         'query': query,
     })
 
+@login_required
 def game(request, room_id):
-    return render(request, 'wordwolf/game.html', {'room_id': room_id})
+    # 指定されたroom_idで、かつ自分がメンバーであるルームを探す
+    member = get_object_or_404(Member, user=request.user, room__id=room_id)
+    
+    # ルームの状態チェック（終了していたら入れないなど）
+    # ただし、結果表示画面などで使うかもしれないので、とりあえずステータスチェックは緩和するか要検討
+    # ここでは PLAYING, VOTING, FINISHED すべて許可するが、WAITINGならロビー(ルーム詳細)へ戻す
+    if member.room.status == Room.Status.WAITING:
+        return redirect('wordwolf:room_detail', room_id=room_id)
+    
+    return render(request, 'wordwolf/game.html', {
+        'room': member.room,
+    })
+
 @login_required
 def friend_list(request):
     friend_requests = FriendRequest.objects.filter(to_user=request.user)
@@ -66,7 +79,6 @@ def friend_list(request):
         'friends': friends,
     }
     return render(request, 'wordwolf/friend.html', context)
-
 @login_required
 def search_user(request):
     query = request.GET.get('query')
@@ -133,16 +145,7 @@ def remove_friend(request, user_id):
     return redirect('wordwolf:friend_list')
   
 def ranking(request):
-    # 追加：クエリパラメータで切り替え
-    order_by = request.GET.get('order_by', 'win')
-
-    if order_by == 'play':
-        users = list(User.objects.all())
-        users.sort(key=lambda u: (u.win_num + u.lose_num), reverse=True)
-        top_users = users[:10]
-    else:
-        top_users = User.objects.order_by('-win_num')[:10]
-
+    top_users = User.objects.order_by('-win_num')[:10]
     ranking_list = []
     for user in top_users:
         ranking_list.append({
@@ -150,18 +153,20 @@ def ranking(request):
             'score': user.win_num,
             'games_played': user.win_num + user.lose_num
         })
-    # ▼ feature/8 の修正を採用（order_by を渡す）
-    return render(request, 'wordwolf/ranking.html', {'ranking_list': ranking_list, 'order_by': order_by})
+    return render(request, 'wordwolf/ranking.html', {'ranking_list': ranking_list})
 
-# ▼ HEAD にあった関数も残す
 @login_required
 def create_game(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
+
             room = form.save(commit=False)
+
             room.host = request.user
+
             room.save()
+
             Member.objects.create(user=request.user, room=room)
             return redirect('wordwolf:room_detail', room_id=room.id)
     else:

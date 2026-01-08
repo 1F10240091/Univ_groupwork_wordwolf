@@ -12,13 +12,6 @@
                 
                 <p class="text-center mb-4 text-muted">最新の勝利数に基づいた上位プレイヤーのリストです。</p>
 
-                <div style="margin: 1em 0;">
-                    <label for="order_by_select" style="font-weight:bold; margin-right:0.5em;">並べ替え</label>
-                    <select id="order_by_select" style="width: 130px;">
-                        <option value="win" {% if order_by == 'win' %}selected{% endif %}>勝利数</option>
-                        <option value="play" {% if order_by == 'play' %}selected{% endif %}>プレイ回数</option>
-                    </select>
-                </div>
                 {% if ranking_list %}
                 
                 <div class="table-responsive">
@@ -53,12 +46,6 @@
                         </tbody>
                     </table>
                 </div>
-                <script>
-                document.getElementById('order_by_select').addEventListener('change', function() {
-                    var order = this.value;
-                    location.href = "?order_by=" + order;
-                });
-                </script>
                 {% else %}
                 <p class="text-center py-5 text-muted">
                     ランキングデータがまだありません。

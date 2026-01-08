@@ -22,8 +22,20 @@
     {% endfor %}
 
     <div class="d-grid gap-3 mt-4">
-        <button type="submit" class="btn btn-accent btn-lg">ルームを作成</button>
+        <button type="submit" class="btn btn-accent btn-lg" id="create-room-btn">ルームを作成</button>
         <a href="{% url 'wordwolf:lobby' %}" class="btn btn-outline-secondary">ロビーに戻る</a>
     </div>
 </form>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const btn = document.getElementById('create-room-btn');
+        if (btn.disabled) {
+            e.preventDefault();
+            return;
+        }
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 作成中...';
+    });
+</script>
 {% endblock %}
