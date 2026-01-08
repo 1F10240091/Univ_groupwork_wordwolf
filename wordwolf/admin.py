@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django import forms
 import json
-from .models import User, WordSet, Question, Room, Member, RoomQuestion
+from .models import User, WordSet, Question, Room, Member, RoomQuestion, ChatMessage
 
 # カスタムユーザーモデルの設定
 # 標準のUserAdminを継承し、追加したフィールド(win_num, lose_num)を編集できるようにします
@@ -89,7 +89,7 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('room_name', 'status', 'created_at')
+    list_display = ('id', 'room_name', 'status', 'max_user_num', 'created_at')
     list_filter = ('status',)
     search_fields = ('room_name',)
 
@@ -100,3 +100,8 @@ class MemberAdmin(admin.ModelAdmin):
 
 # RoomQuestionは単純な中間テーブルに近いのでシンプルに登録
 admin.site.register(RoomQuestion)
+
+@admin.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = ('room', 'user', 'message', 'is_system', 'timestamp')
+    list_filter = ('room', 'is_system')

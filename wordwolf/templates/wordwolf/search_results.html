@@ -1,35 +1,35 @@
-{% extends 'base.html' %}
+{% extends 'card_layout.html' %}
 {% load static %}
 
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="content-card card">
-            <div class="card-body">
-                <h2 class="page-title mb-4">"{{ query }}" の検索結果</h2>
-                
-                <ul class="list-group list-group-flush mb-4" style="background: transparent;">
-                    {% for user in users %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span class="text-white">{{ user.username }}</span>
-                        
-                        <form action="{% url 'wordwolf:send_request' user.id %}" method="POST">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                申請する
-                            </button>
-                        </form>
-                    </li>
-                    {% empty %}
-                        <p class="text-white">ユーザーが見つかりませんでした。</p>
-                    {% endfor %}
-                </ul>
-                
-                <div class="text-center">
-                    <a href="{% url 'wordwolf:friend_list' %}" class="btn btn-outline-secondary">フレンド一覧に戻る</a>
-                </div>
-            </div>
-        </div>
+{% block title %}ユーザー検索結果{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/friend.css' %}">
+{% endblock %}
+
+{% block card_content %}
+<div class="friend-manage-area text-start">
+    <h1 class="page-title mb-4" style="font-size: 1.5rem;">"{{ query }}" の検索結果</h1>
+    
+    <ul class="list-unstyled">
+        {% for user in users %}
+        <li class="friend-item">
+            <span>{{ user.username }}</span>
+            
+            <form action="{% url 'wordwolf:send_request' user.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn-approve">
+                    申請する
+                </button>
+            </form>
+        </li>
+        {% empty %}
+            <p class="text-muted">ユーザーが見つかりませんでした。</p>
+        {% endfor %}
+    </ul>
+    
+    <div class="mt-4 text-center">
+        <a href="{% url 'wordwolf:friend_list' %}" class="btn btn-outline-secondary">フレンド一覧に戻る</a>
     </div>
 </div>
 {% endblock %}
