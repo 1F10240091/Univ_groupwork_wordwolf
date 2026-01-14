@@ -352,6 +352,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
             room = Room.objects.get(id=room_id)
             member = Member.objects.get(user=user, room=room)
             
+            # カテゴリ取得
+            category = ""
+            if room.word_set:
+                category = room.word_set.category
+            
             # 全プレイヤー名のリスト
             all_members = [m.user.username for m in room.members.all()]
 
@@ -390,6 +395,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
             return {
                 'my_word': member.word,
+                'category': category,
                 'role': member.role,
                 'discussion_time': room.discussion_time,
                 'members': all_members,

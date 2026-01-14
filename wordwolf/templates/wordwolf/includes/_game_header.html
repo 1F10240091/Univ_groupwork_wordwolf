@@ -10,9 +10,15 @@
             </div>
         </div>
         
-        <div id="my-word" class="mx-2 mx-md-4 d-none d-sm-block">
-            自分のお題: 
-            <span id="word-display" class="fw-bold me-2">???</span>
+        <div id="my-word" class="mx-2 mx-md-4 d-none d-sm-flex flex-column flex-lg-row align-items-center justify-content-center">
+            <div id="theme-display-area" class="js-theme-area d-none mb-1 mb-lg-0 me-lg-3 text-nowrap">
+                <span>テーマ: <span id="theme-display" class="js-theme-display fw-bold text-info"></span></span>
+                <span class="d-none d-lg-inline text-secondary mx-2">|</span>
+            </div>
+            <div class="text-nowrap">
+                自分のお題: 
+                <span id="word-display" class="js-word-display fw-bold fs-5 text-warning">???</span>
+            </div>
         </div>
         
         <div id="time-limit">
@@ -21,22 +27,9 @@
     </div>
     <!-- スマホ用お題表示 (ヘッダー下部に表示) -->
     <div class="d-sm-none mt-2 text-center small text-muted">
-        自分のお題: <span id="word-display-mobile" class="fw-bold text-white">???</span>
+        <span id="theme-display-mobile-area" class="js-theme-area d-none me-2">
+            テーマ: <span id="theme-display-mobile" class="js-theme-display fw-bold text-info"></span>
+        </span>
+        自分のお題: <span id="word-display-mobile" class="js-word-display fw-bold text-white">???</span>
     </div>
 </header>
-
-<script>
-    // お題が更新されたらスマホ用表示も更新する簡易スクリプト
-    const originalWordDisplay = document.getElementById('word-display');
-    const mobileWordDisplay = document.getElementById('word-display-mobile');
-    
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mobileWordDisplay) mobileWordDisplay.textContent = mutation.target.textContent;
-        });
-    });
-    
-    if (originalWordDisplay) {
-        observer.observe(originalWordDisplay, { childList: true, characterData: true, subtree: true });
-    }
-</script>

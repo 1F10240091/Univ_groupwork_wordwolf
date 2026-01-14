@@ -12,6 +12,13 @@ const chatInput = document.getElementById('chat-input');
 const sendBtn = document.getElementById('send-chat-btn');
 const topicText = document.getElementById('topic-text');
 const wordDisplay = document.getElementById('word-display');
+const themeDisplay = document.getElementById('theme-display');
+const themeDisplayArea = document.getElementById('theme-display-area');
+
+const wordDisplays = document.querySelectorAll('.js-word-display');
+const themeDisplays = document.querySelectorAll('.js-theme-display');
+const themeDisplayAreas = document.querySelectorAll('.js-theme-area');
+
 // IDではなくクラスで取得するように変更（複数箇所のリストを更新するため）
 const playerLists = document.querySelectorAll('.player-list-container');
 
@@ -153,8 +160,29 @@ socket.onmessage = function(e) {
         
         // メイン画面への反映
         topicText.textContent = "待機中...";
-        wordDisplay.textContent = info.my_word;
+        // wordDisplay.textContent = info.my_word; // 旧コード、クラスで一括更新する
+        wordDisplays.forEach(el => el.textContent = info.my_word);
+
         
+        // テーマの反映
+        /*
+        if (info.category && themeDisplay && themeDisplayArea) {
+            themeDisplay.textContent = info.category;
+            themeDisplayArea.classList.remove('d-none');
+        }
+        */
+        if (info.category) {
+            themeDisplays.forEach(el => el.textContent = info.category);
+            themeDisplayAreas.forEach(el => el.classList.remove('d-none'));
+        }
+
+        const modalTheme = document.getElementById('modal-theme-display');
+        const modalThemeArea = document.getElementById('modal-theme-area');
+        if (info.category && modalTheme && modalThemeArea) {
+            modalTheme.textContent = info.category;
+            modalThemeArea.classList.remove('d-none');
+        }
+
         // すべてのプレイヤーリスト（PC用・スマホ用）を更新
         playerLists.forEach(list => {
             list.innerHTML = '';
